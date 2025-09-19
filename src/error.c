@@ -6,14 +6,12 @@
 #include <unistd.h>
 #include <signal.h>
 
-// FIX: The handle_error message gets overwritten by the terminal (PS1)
-
 void handle_error(int errorCode, const char *file, int line, const char *function, const char *message, ...) {
 	if (isendwin() == FALSE)
 		endwin();
 
 	// Print error header
-	fprintf(stderr, "[ERROR] [Code: %d]\n", errorCode);
+	fprintf(stderr, "[ERROR] [%d]\n", errorCode);
 	fprintf(stderr, "Location: %s:%d in function %s()\n", file, line, function);
 
 	// Print the formatted message
@@ -25,5 +23,5 @@ void handle_error(int errorCode, const char *file, int line, const char *functio
 
 	fprintf(stderr, "\n\n");
 
-	raise(SIGTRAP);
+	raise(SIGABRT);
 }
