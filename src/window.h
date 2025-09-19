@@ -3,7 +3,7 @@
 
 #include <ncursesw/ncurses.h>
 
-// FIX: Separate into a Layout enum and Aligment enum
+// TODO: Separate into a Layout enum and Aligment enum
 // So a "on_top" layout can be mixed with a "center" aligment, or "left"
 typedef enum WindowLayout
 {
