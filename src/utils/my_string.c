@@ -1,9 +1,9 @@
-#include "my_string.h"
+#include "utils/my_string.h"
 
 #include <string.h>
 #include <stdlib.h>
 
-#include "error.h"
+#include "utils/error.h"
 
 // NOTE: Need to initialize the length and _allocated
 void String_New(String* pString, wchar_t* letters)
@@ -20,7 +20,7 @@ void String_New(String* pString, wchar_t* letters)
 	// String_AllocateMemory(pString, length);
 	// wcscpy(pString->letters, letters);
 	size_t length = wcslen(letters);
-	pString->length = length;
+	pString->length = (int)length;
 	pString->letters = letters;
 }
 
@@ -36,7 +36,7 @@ void String_AllocateMemory(String *pString, size_t allocate)
 	pString->_allocated += allocate;
 }
 
-wchar_t String_GetChar(String *pString, size_t index)
+wchar_t String_GetChar(String *pString, int index)
 {
 	if (!String_IsIndexValid(pString, index))
 		HANDLE_ERROR(1, "%s", "Invalid index");
@@ -44,9 +44,16 @@ wchar_t String_GetChar(String *pString, size_t index)
 	return pString->letters[index];
 }
 
-bool String_IsIndexValid(String *pString, size_t index)
+bool String_IsIndexValid(String *pString, int index)
 {
-	return (index < pString->length - 1);
+	return (index >= 0 && index < (int)pString->length + 1);
+}
+
+bool String_IsCharAtIndexEqual(String *pString, int index, wchar_t match)
+{
+	wchar_t character = String_GetChar(pString, index);
+
+	return (character == match);
 }
 
 void String_Free(String* pString)

@@ -1,10 +1,10 @@
-#include "window.h"
+#include "ui/window.h"
 
-#include "error.h"
+#include "utils/error.h"
 
-WINDOW* Window_New(WINDOW *base, WindowLayout layout)
+WINDOW* Window_New(WINDOW *base, WindowLayout layout, WindowAlign align)
 {
-	WindowAttrs attrs = Window_SetLayout(base, layout);
+	WindowAttrs attrs = Window_SetLayout(base, layout, align);
 	Window_checkAttrs(attrs);
 
 	WINDOW* window = newwin(attrs.lines, attrs.cols, attrs.y, attrs.x);
@@ -13,14 +13,14 @@ WINDOW* Window_New(WINDOW *base, WindowLayout layout)
 	return window;
 }
 
-WindowAttrs Window_SetLayout(WINDOW* base, WindowLayout layout)
+WindowAttrs Window_SetLayout(WINDOW* base, WindowLayout layout, WindowAlign align)
 {
 	switch (layout)
 	{
+		case WINDOW_LAYOUT_ON_TOP:
+			return Window_SetLayout_OnTop(base, align);
 		case WINDOW_LAYOUT_CENTER:
 			return Window_SetLayout_Center(base);
-		case WINDOW_LAYOUT_ON_TOP:
-			return Window_SetLayout_On_Top(base);
 		default:
 			HANDLE_ERROR(1, "Invalid layout \"%zu\"", layout);
 			break;
@@ -46,7 +46,8 @@ WindowAttrs Window_SetLayout_Center(WINDOW *base)
 	float x = (maxCols - cols) / 2.0f;
 	float y = (maxLines - lines) / 2.0f;
 
-	WindowAttrs attrs = {
+	WindowAttrs attrs =
+	{
 		.x = (int)x,
 		.y = (int)y,
 		.cols = (int)cols,
@@ -55,9 +56,8 @@ WindowAttrs Window_SetLayout_Center(WINDOW *base)
 
 	return attrs;
 }
-
 // FIX: The stdscr must be passed as an argument
-WindowAttrs Window_SetLayout_On_Top(WINDOW *onTop)
+WindowAttrs Window_SetLayout_OnTop(WINDOW *onTop, WindowAlign align)
 {
 	if (onTop == stdscr)
 		HANDLE_ERROR(1, "%s", "No window can be on top of the stdscr");
@@ -68,22 +68,25 @@ WindowAttrs Window_SetLayout_On_Top(WINDOW *onTop)
 	const float beginCols = (float)getbegx(onTop);
 	const float beginLines = (float)getbegy(onTop);
 
+	const float maxCols = (float)getmaxx(onTop);
+
 	// FIX: This values are hard coded
 	// Those values must be passed as arguments, in a struct called Attributes
 	// or Positions
 	const float colsFactor = 0.4f;
-	const float linesFactor = 0.3f;
+	const float linesFactor = 0.2f;
 
 	float cols = maxColsStdscr * colsFactor;
 	float lines = maxLinesStdscr * linesFactor;
 
-	// X Left Aligment
-	float x = beginCols;
+	// X Aligment
+	float x = Window_SetAlign(align, (maxCols - beginCols), beginCols, cols);
 
-	const float offset = 3;
+	const float offset = .0f;
 	float y = beginLines - lines - offset;
 
-	WindowAttrs attrs = {
+	WindowAttrs attrs =
+	{
 		.x = (int)x,
 		.y = (int)y,
 		.cols = (int)cols,
@@ -91,6 +94,39 @@ WindowAttrs Window_SetLayout_On_Top(WINDOW *onTop)
 	};
 
 	return attrs;
+}
+
+float Window_SetAlign(WindowAlign align, float ref_size, float ref_pos, float obj_size)
+{
+	switch (align)
+	{
+		case WINDOW_ALIGN_CENTER:
+			return Window_SetAlign_Center(ref_size, ref_pos, obj_size);
+		case WINDOW_ALIGN_LEFT:
+			return Window_SetAlign_Left(ref_size, ref_pos, obj_size);
+		case WINDOW_ALIGN_RIGHT:
+			return Window_SetAlign_Right(ref_size, ref_pos, obj_size);
+		default:
+			HANDLE_ERROR(1, "%s", "Invalid window aligment");
+	}
+
+	return 0;
+}
+
+float Window_SetAlign_Center(float ref_size, float ref_pos, float obj_size)
+{
+	return ref_pos + (obj_size - ref_size) / 2.0f;
+}
+
+float Window_SetAlign_Left(float ref_size, float ref_pos, float obj_size)
+{
+	return ref_pos;
+}
+
+// FIX: don't work
+float Window_SetAlign_Right(float ref_size, float ref_pos, float obj_size)
+{
+	return obj_size;
 }
 
 void Window_checkAttrs(WindowAttrs attrs)

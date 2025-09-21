@@ -1,9 +1,7 @@
 #ifndef TEXT_H
 #define TEXT_H
 
-#include <wchar.h>
-
-#include "my_string.h"
+#include "utils/my_string.h"
 
 typedef enum TextDifficulty
 {
@@ -14,11 +12,10 @@ typedef enum TextDifficulty
 
 typedef struct TextEntry
 {
-	wchar_t* text;
-	size_t length;
+	String text;
 	TextDifficulty difficulty;
 } TextEntry;
 
-void Sample_Loader(String* pSentence, size_t randomEntry);
+TextEntry* TextEntry_RandomText(void);
 
 #endif // TEXT_H
