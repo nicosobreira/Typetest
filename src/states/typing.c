@@ -1,10 +1,10 @@
 #include "states/typing.h"
 
+#include "constants/key_codes.h"
 #include "ui/color.h"
 #include "ui/window.h"
-#include "assets/samples.h"
 
-static void handleBackspace(GameStateMachine *sm)
+static void handleBackspace(GameStateMachine* sm)
 {
 	TypingData* data = (TypingData *)GameStateMachine_GetData(sm);
 
@@ -37,19 +37,20 @@ static void handleCharacterInput(GameStateMachine* sm, wint_t key)
 	wchar_t textChar = String_GetChar(&data->pTextEntry->text, data->pointerText);
 
 	if (character == textChar) {
-		wattron(data->windowText, COLOR_PAIR(COLOR_GREEN));
+		COLOR_ON(data->windowText, COLOR_GREEN);
 		data->correctLetters++;
 	} else {
-		wattron(data->windowText, COLOR_PAIR(COLOR_RED));
+		COLOR_ON(data->windowText, COLOR_RED);
+		data->score.wrongLetters++;
 	}
 
 	mvwaddnwstr(data->windowText, 0, data->pointerText, &character, 1);
 
-	wattron(data->windowText, COLOR_PAIR(COLOR_DEFAULT));
+	COLOR_ON(data->windowText, COLOR_DEFAULT);
 
 	// NOTE: Game win
 	if (data->correctLetters >= data->pTextEntry->text.length) {
-		GameStateMachine_Quit(sm);
+		GameStateMachine_Switch(sm, GAME_STATE_MENU);
 		return;
 	}
 
@@ -61,10 +62,13 @@ static void compareInputText(GameStateMachine* sm, wint_t key)
 {
 	switch (key)
 	{
-		case 127: // Backspace (DEL)
+		case KEY_CODE_BACKSPACE:
 			handleBackspace(sm);
 			break;
-		case 10: // Enter
+		case KEY_CODE_ESCAPE:
+			GameStateMachine_Switch(sm, GAME_STATE_MENU);
+			break;
+		case KEY_CODE_ENTER:
 			break;
 		default:
 			handleCharacterInput(sm, key);
@@ -72,20 +76,68 @@ static void compareInputText(GameStateMachine* sm, wint_t key)
 	}
 }
 
+static void drawEntrySpeed(TypingData* data)
+{
+	const int startX = 1;
+	const int startY = 1;
+
+	const int maxLines = getmaxy(data->windowStatus) - startY * 2;
+
+	Window_ClearRectangle(data->windowStatus, maxLines - 1, startX, maxLines, startX);
+
+	mvwprintw(data->windowStatus, maxLines, startX, "CPS: %.0f", data->score.charsPerSecond);
+	mvwprintw(data->windowStatus, maxLines - 1, startX, "WPM: %.0f", data->score.wordsPerMinute);
+}
+
+static void drawStatus(TypingData* data)
+{
+	if (!data->shouldDraw)
+		return;
+
+	const int startX = 1;
+	const int startY = 1;
+
+	drawEntrySpeed(data);
+
+	mvwprintw(data->windowStatus, startX, startY, "Completion:");
+
+	int percentage = 100 * data->correctLetters/data->pTextEntry->text.length;
+
+	Window_DrawPercentage(data->windowStatus, percentage);
+}
+
+static void calculateCharsPerSecond(TypingData* data)
+{
+	// Question: How much did the inputBuffer grow in one second?
+	double deltaChars = (double)(data->inputBuffer.size);
+	double deltaTime = Clock_Get(&data->score.seconds) / 1000.0;
+
+	data->score.charsPerSecond = deltaChars / deltaTime;
+	data->score.wordsPerMinute = data->score.charsPerSecond * (60.0 / 5.0);
+}
+
 void Typing_OnEnter(GameStateMachine* sm)
 {
 	TypingData* data = (TypingData *)GameStateMachine_GetData(sm);
 
-	// Cleanup previous screen
-	erase();
+	curs_set(1);
 
-	// data->pTextEntry = TextEntry_RandomText();
-	data->pTextEntry = &TEXT_SAMPLES[0];
+	// TODO: Implement a countdown
+
+	data->pTextEntry = TextEntry_RandomText();
 	data->pointerText = 0;
 	data->correctLetters = 0;
 
-	// mvwaddwstr(data->windowText, 1, 1, data->pTextEntry->text.letters);
-	waddwstr(data->windowText, data->pTextEntry->text.letters);
+	Clock_Set(&data->score.seconds, 1000.0);
+	data->score.charsPerSecond = 0.0;
+	data->score.wordsPerMinute = 0.0;
+	data->score.wrongLetters = 0;
+
+	Window_DrawString(data->windowText, &data->pTextEntry->text);
+
+	box(data->windowStatus, 0, 0);
+
+	data->shouldDraw = true;
 
 	wrefresh(data->windowStatus);
 	wrefresh(data->windowText);
@@ -95,10 +147,13 @@ void Typing_OnExit(GameStateMachine* sm)
 {
 	TypingData* data = (TypingData *)GameStateMachine_GetData(sm);
 
-	StackChar_Free(&data->inputBuffer);
+	data->shouldDraw = false;
 
-	delwin(data->windowText);
-	delwin(data->windowStatus);
+	werase(data->windowText);
+	wrefresh(data->windowText);
+
+	werase(data->windowStatus);
+	wrefresh(data->windowStatus);
 }
 
 void Typing_Input(GameStateMachine* sm)
@@ -109,13 +164,31 @@ void Typing_Input(GameStateMachine* sm)
 	int returnValue = wget_wch(data->windowText, &key);
 
 	if (returnValue == ERR)
+	{
+		data->shouldDraw = false;
 		return;
+	}
 
+	data->shouldDraw = true;
 	compareInputText(sm, key);
+}
 
-	// FIX: Move this elsewhere
+void Typing_Update(GameStateMachine* sm, double delta)
+{
+	TypingData* data = (TypingData *)GameStateMachine_GetData(sm);
 
-	mvwprintw(data->windowStatus, 1, 1, "Correct Letters: %d", data->correctLetters);
+	if (Clock_Tick(&data->score.seconds, delta))
+	{
+		calculateCharsPerSecond(data);
+		data->shouldDraw = true;
+	}
+}
+
+void Typing_Draw(GameStateMachine* sm)
+{
+	TypingData* data = (TypingData *)GameStateMachine_GetData(sm);
+
+	drawStatus(data);
 
 	wmove(data->windowText, 0, data->pointerText);
 
@@ -123,14 +196,14 @@ void Typing_Input(GameStateMachine* sm)
 	wrefresh(data->windowText);
 }
 
-void Typing_Update(GameStateMachine* sm)
+void Typing_Free(GameStateMachine* sm)
 {
-	(void)sm;
-}
+	TypingData* data = (TypingData *)GameStateMachine_GetData(sm);
 
-void Typing_Draw(GameStateMachine* sm)
-{
-	(void)sm;
+	StackChar_Free(&data->inputBuffer);
+
+	delwin(data->windowText);
+	delwin(data->windowStatus);
 }
 
 GameState Typing_Constructor(TypingData* data)
@@ -141,7 +214,8 @@ GameState Typing_Constructor(TypingData* data)
 	typing.OnExit = Typing_OnExit;
 	typing.Input = Typing_Input;
 	typing.Update = Typing_Update;
-	typing.Draw = Typing_Update;
+	typing.Draw = Typing_Draw;
+	typing.Free = Typing_Free;
 
 	data->windowText = Window_New(stdscr, WINDOW_LAYOUT_CENTER, WINDOW_ALIGN_NULL);
 

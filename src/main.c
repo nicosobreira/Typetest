@@ -4,21 +4,29 @@
 
 #include <locale.h>
 #include <ncursesw/ncurses.h>
-#include <wchar.h>
 #include <stdlib.h> // rand, srand
 #include <time.h> // time
+#include <sys/time.h>
+#include <unistd.h> // usleep
 
 #include "core/game_state.h"
 #include "states/typing.h"
 #include "states/menu.h"
 #include "utils/error.h"
 
-#define FPS (60.0f)
-#define MS_PER_SECONDS (int)(1.0f / FPS)
+// 60 ticks per second
+const double MS_PER_UPDATE = 1000.0 / 60.0;
 
 // TODO: Change the String sentence in game to a TextEntry
 
 // NOTE: Screen updates (refresh) are made only when necessary
+
+static long long getCurrentTimeMs()
+{
+	struct timeval tv;
+	gettimeofday(&tv, NULL);
+	return (long long)tv.tv_sec * 1000 + (long long)tv.tv_usec / 1000;
+}
 
 void Game_Init(void);
 
@@ -36,21 +44,41 @@ int main(void)
 	stateMachine.states[GAME_STATE_TYPING] = Typing_Constructor(&typingData);
 	stateMachine.states[GAME_STATE_MENU] = Menu_Constructor(&menuData);
 
-	GameStateMachine_Switch(&stateMachine, GAME_STATE_TYPING);
+	// NOTE: You can't use GameStateMachine_Switch here because there is no
+	// previous state to call OnExit
+	stateMachine.current = &stateMachine.states[GAME_STATE_MENU];
+	stateMachine.current->OnEnter(&stateMachine);
 
 	stateMachine.isRunning = true;
 
+	long long previousTime = getCurrentTimeMs();
+	double lag = 0.0;
+
 	while (stateMachine.isRunning)
 	{
+		long long currentTime = getCurrentTimeMs();
+		double elapsedTime = (double)(currentTime - previousTime);
+		previousTime = currentTime;
+		lag += elapsedTime;
+
 		stateMachine.current->Input(&stateMachine);
-		stateMachine.current->Update(&stateMachine);
+
+		while (lag >= MS_PER_UPDATE)
+		{
+			stateMachine.current->Update(&stateMachine, MS_PER_UPDATE);
+			lag -= MS_PER_UPDATE;
+		}
+
 		stateMachine.current->Draw(&stateMachine);
 
-		napms(MS_PER_SECONDS);
+		if (lag < MS_PER_UPDATE)
+		{
+			double sleepTimeUs = (MS_PER_UPDATE - lag) * 1000;
+			usleep((useconds_t)sleepTimeUs);
+		}
 	}
 
-	stateMachine.states[GAME_STATE_TYPING].OnExit(&stateMachine);
-	stateMachine.states[GAME_STATE_MENU].OnExit(&stateMachine);
+	stateMachine.current->Free(&stateMachine);
 
 	endwin();
 

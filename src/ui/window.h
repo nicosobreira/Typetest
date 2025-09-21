@@ -1,7 +1,13 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
+#ifndef _XOPEN_SOURCE_EXTENDED
+#define _XOPEN_SOURCE_EXTENDED 1
+#endif
+
 #include <ncursesw/ncurses.h>
+
+#include "utils/my_string.h"
 
 // TODO: Separate into a Layout enum and Aligment enum
 // So a "on_top" layout can be mixed with a "center" aligment, or "left"
@@ -28,9 +34,16 @@ typedef struct WindowAttrs
 	int lines;
 } WindowAttrs;
 
-WINDOW* Window_New(WINDOW *base, WindowLayout layout, WindowAlign align);
+WINDOW* Window_New(WINDOW* base, WindowLayout layout, WindowAlign align);
 
-void Window_checkAttrs(WindowAttrs attrs);
+void Window_ClearRectangle(WINDOW* base, int startY, int startX, int endY, int endX);
+
+void Window_DrawPercentage(WINDOW* base, int percentage);
+
+/// Has wrap line support
+void Window_DrawString(WINDOW* base, String* pString);
+
+void Window_CheckAttrs(WindowAttrs attrs);
 
 WindowAttrs Window_SetLayout(WINDOW* base, WindowLayout layout, WindowAlign align);
 

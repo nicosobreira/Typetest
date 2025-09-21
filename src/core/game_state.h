@@ -8,21 +8,25 @@
 
 typedef struct GameStateMachine GameStateMachine;
 
+typedef void (*GameStateFunc)(GameStateMachine* sm);
+typedef void (*GameStateFuncUpdate)(GameStateMachine* sm, double delta);
+
+typedef void* Data;
+
 typedef enum GameStateType
 {
 	GAME_STATE_TYPING,
 	GAME_STATE_MENU,
 } GameStateType;
 
-typedef void* Data;
-
 typedef struct GameState
 {
-	void (*OnEnter)(GameStateMachine* sm);
-	void (*OnExit)(GameStateMachine* sm);
-	void (*Input)(GameStateMachine* sm);
-	void (*Update)(GameStateMachine* sm);
-	void (*Draw)(GameStateMachine* sm);
+	GameStateFunc OnEnter;
+	GameStateFunc OnExit;
+	GameStateFunc Input;
+	GameStateFuncUpdate Update;
+	GameStateFunc Draw;
+	GameStateFunc Free;
 	Data data;
 } GameState;
 

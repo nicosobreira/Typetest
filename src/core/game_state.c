@@ -7,6 +7,8 @@ Data GameStateMachine_GetData(GameStateMachine* stateMachine)
 
 void GameStateMachine_Switch(GameStateMachine* stateMachine, GameStateType type)
 {
+	stateMachine->current->OnExit(stateMachine);
+
 	stateMachine->current = &stateMachine->states[type];
 	stateMachine->current->OnEnter(stateMachine);
 }
