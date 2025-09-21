@@ -1,16 +1,15 @@
 #ifndef TYPING_H
 #define TYPING_H
 
+#ifndef _XOPEN_SOURCE_EXTENDED
+#define _XOPEN_SOURCE_EXTENDED 1
+#endif
+
 #include <ncursesw/ncurses.h>
 
+#include "core/game_state.h"
 #include "core/text_entry.h"
 #include "utils/stack_char.h"
-
-typedef struct Point
-{
-	int x;
-	int y;
-} Point;
 
 // FIX: Separate the int cursor into two variables
 // 1. Virtual screen position
@@ -21,20 +20,16 @@ typedef struct TypingData
 	StackChar inputBuffer;
 	WINDOW* windowStatus;
 	WINDOW* windowText;
-	Point cursor;
 	int pointerText;
 	int correctLetters;
 } TypingData;
 
-void compareInputText(TypingData* pTyping, wint_t key);
+void Typing_OnEnter(GameStateMachine* sm);
+void Typing_OnExit(GameStateMachine* sm);
+void Typing_Input(GameStateMachine* sm);
+void Typing_Update(GameStateMachine* sm);
+void Typing_Draw(GameStateMachine* sm);
 
-void Typing_ColorInit(void);
-
-void Typing_Start(TypingData* pTyping);
-
-void Typing_Input(TypingData* pTyping);
-
-void Typing_Update(TypingData* pTyping);
-
+GameState Typing_Constructor(TypingData* data);
 
 #endif // TYPING_H

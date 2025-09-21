@@ -1,41 +1,43 @@
 #ifndef GAME_STATE_H
 #define GAME_STATE_H
 
-#include <ncursesw/ncurses.h>
+#include <stdbool.h>
 
-#include "core/text_entry.h"
-#include "utils/stack_char.h"
+// Total GameStateType possible values
+#define GAME_STATES_MAX (2)
 
-typedef struct Typing Game;
-typedef struct GameState GameState;
+typedef struct GameStateMachine GameStateMachine;
 
-typedef struct Typing
+typedef enum GameStateType
 {
-	GameState* state;
-} Game;
+	GAME_STATE_TYPING,
+	GAME_STATE_MENU,
+} GameStateType;
 
-typedef void* data;
+typedef void* Data;
 
 typedef struct GameState
 {
-	void (*Enter)(data*);
-	void (*Start)(data*);
-	void (*Input)(data*);
-	void (*Update)(data*);
-	void (*Draw)(data*);
+	void (*OnEnter)(GameStateMachine* sm);
+	void (*OnExit)(GameStateMachine* sm);
+	void (*Input)(GameStateMachine* sm);
+	void (*Update)(GameStateMachine* sm);
+	void (*Draw)(GameStateMachine* sm);
+	Data data;
 } GameState;
 
-typedef struct TypingData
+typedef struct GameStateMachine
 {
-	TextEntry* pTextEntry;
-	StackChar inputBuffer;
-	WINDOW* windowStatus;
-	WINDOW* windowText;
-	int pointerText;
-	int correctLetters;
-	GameState state;
-} TypingData;
+	GameState states[GAME_STATES_MAX];
+	GameState* current;
+	bool isRunning;
+} GameStateMachine;
 
-void Typing_Enter(Game* pGame);
+// Helper function
+Data GameStateMachine_GetData(GameStateMachine* sm);
+
+void GameStateMachine_Switch(GameStateMachine* sm, GameStateType type);
+
+void GameStateMachine_Quit(GameStateMachine* sm);
 
 #endif // GAME_STATE_H
