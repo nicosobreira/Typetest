@@ -4,6 +4,8 @@
 #include "ui/color.h"
 #include "ui/window.h"
 
+static const double SECONDS_CLOCK_UPDATE = 500.0;
+
 static void handleBackspace(GameStateMachine* sm)
 {
 	TypingData* data = (TypingData *)GameStateMachine_GetData(sm);
@@ -15,9 +17,8 @@ static void handleBackspace(GameStateMachine* sm)
 
 	wchar_t textChar = String_GetChar(&data->pTextEntry->text, data->pointerText);
 
-	if (textChar == StackChar_Top(&data->inputBuffer)) {
+	if (textChar == StackChar_Top(&data->inputBuffer))
 		data->correctLetters--;
-	}
 
 	StackChar_Pop(&data->inputBuffer);
 
@@ -37,19 +38,24 @@ static void handleCharacterInput(GameStateMachine* sm, wint_t key)
 	wchar_t textChar = String_GetChar(&data->pTextEntry->text, data->pointerText);
 
 	if (character == textChar) {
-		COLOR_ON(data->windowText, COLOR_GREEN);
 		data->correctLetters++;
+
+		COLOR_ON(data->windowText, COLOR_GREEN);
 	} else {
-		COLOR_ON(data->windowText, COLOR_RED);
 		data->score.wrongLetters++;
+
+		COLOR_ON(data->windowText, COLOR_RED);
 	}
+
+	// TODO: if the key is space then set the BACKGROUND color to RED
 
 	mvwaddnwstr(data->windowText, 0, data->pointerText, &character, 1);
 
-	COLOR_ON(data->windowText, COLOR_DEFAULT);
+	COLOR_CLEAN(data->windowText);
 
 	// NOTE: Game win
-	if (data->correctLetters >= data->pTextEntry->text.length) {
+	if (data->correctLetters >= data->pTextEntry->text.length)
+	{
 		GameStateMachine_Switch(sm, GAME_STATE_MENU);
 		return;
 	}
@@ -123,12 +129,13 @@ void Typing_OnEnter(GameStateMachine* sm)
 	curs_set(1);
 
 	// TODO: Implement a countdown
+	StackChar_Free(&data->inputBuffer);
 
 	data->pTextEntry = TextEntry_RandomText();
 	data->pointerText = 0;
 	data->correctLetters = 0;
 
-	Clock_Set(&data->score.seconds, 1000.0);
+	Clock_Set(&data->score.seconds, SECONDS_CLOCK_UPDATE);
 	data->score.charsPerSecond = 0.0;
 	data->score.wordsPerMinute = 0.0;
 	data->score.wrongLetters = 0;

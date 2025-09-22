@@ -106,7 +106,7 @@ void Window_DrawPercentage(WINDOW* base, int percentage)
 
 	mvwaddch(base, perY, perX + index + 1, perArrow);
 
-	COLOR_ON(base, COLOR_DEFAULT);
+	COLOR_CLEAN(base);
 
 	mvwaddch(base, perY, maxCols, perBorderRight);
 }

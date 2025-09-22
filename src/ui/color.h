@@ -1,5 +1,5 @@
-#ifndef CORE_H
-#define CORE_H
+#ifndef COLOR_H
+#define COLOR_H
 
 #include <ncursesw/ncurses.h>
 
@@ -7,6 +7,10 @@
 
 #define COLOR_ON(win, color) (wattron(win, COLOR_PAIR(color)))
 
-#define COLOR_OFF(win, color) (wattroff(win, COLOR_PAIR(color)))
+#define COLOR_CLEAN(win) (wattroff(win, COLOR_PAIR(COLOR_DEFAULT)))
 
-#endif // CORE_H
+#define BACKGROUND_ON(win, color) (wbkgd(win, COLOR_PAIR(color)))
+
+#define BACKGROUND_CLEAN(win) (wbkgd(win, COLOR_PAIR(COLOR_DEFAULT)))
+
+#endif // COLOR_H
