@@ -22,10 +22,6 @@ bool String_IsCharAtIndexEqual(String *pString, int index, wchar_t match);
 
 void String_AllocateMemory(String *pString, size_t allocate);
 
-void String_AddChar(String *pString, wchar_t character);
-
-void String_PopChar(String *pString);
-
 void String_Free(String* pString);
 
 #endif // STRING_H
