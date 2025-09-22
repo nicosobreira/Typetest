@@ -9,6 +9,7 @@
 
 #include "utils/clock.h"
 
+#include "utils/point.h"
 #include "core/game_state.h"
 #include "core/text_entry.h"
 #include "utils/stack_char.h"
@@ -31,6 +32,7 @@ typedef struct TypingData
 	TextEntry* pTextEntry;
 	WINDOW* windowStatus;
 	WINDOW* windowText;
+	Point cursor;
 	int pointerText;
 	int correctLetters;
 	bool shouldDraw;

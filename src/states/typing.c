@@ -51,7 +51,7 @@ static void handleCharacterInput(GameStateMachine* sm, wint_t key)
 
 	mvwaddnwstr(data->windowText, 0, data->pointerText, &character, 1);
 
-	COLOR_CLEAN(data->windowText);
+	COLOR_CLEAR(data->windowText);
 
 	// NOTE: Game win
 	if (data->correctLetters >= data->pTextEntry->text.length)
@@ -135,6 +135,9 @@ void Typing_OnEnter(GameStateMachine* sm)
 	data->pointerText = 0;
 	data->correctLetters = 0;
 
+	data->cursor.x = 0;
+	data->cursor.y = 0;
+
 	Clock_Set(&data->score.seconds, SECONDS_CLOCK_UPDATE);
 	data->score.charsPerSecond = 0.0;
 	data->score.wordsPerMinute = 0.0;
@@ -142,12 +145,11 @@ void Typing_OnEnter(GameStateMachine* sm)
 
 	Window_DrawString(data->windowText, &data->pTextEntry->text);
 
+	COLOR_ON(data->windowStatus, COLOR_RED);
 	box(data->windowStatus, 0, 0);
+	COLOR_CLEAR(data->windowStatus);
 
 	data->shouldDraw = true;
-
-	wrefresh(data->windowStatus);
-	wrefresh(data->windowText);
 }
 
 void Typing_OnExit(GameStateMachine* sm)
@@ -177,6 +179,7 @@ void Typing_Input(GameStateMachine* sm)
 	}
 
 	data->shouldDraw = true;
+
 	compareInputText(sm, key);
 }
 
