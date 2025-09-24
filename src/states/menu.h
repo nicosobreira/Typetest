@@ -18,7 +18,7 @@ typedef struct MenuData
 void Menu_OnEnter(GameStateMachine* sm);
 void Menu_OnExit(GameStateMachine* sm);
 void Menu_Input(GameStateMachine* sm);
-void Menu_Update(GameStateMachine* sm, double delta);
+void Menu_Update(GameStateMachine* sm);
 void Menu_Draw(GameStateMachine* sm);
 
 void Menu_Free(GameStateMachine* sm);

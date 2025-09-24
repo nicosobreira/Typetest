@@ -56,7 +56,7 @@ static void handleCharacterInput(GameStateMachine* sm, wint_t key)
 	// NOTE: Game win
 	if (data->correctLetters >= data->pTextEntry->text.length)
 	{
-		GameStateMachine_Switch(sm, GAME_STATE_MENU);
+		GameStateMachine_Switch(sm, GAME_STATE_SCORE);
 		return;
 	}
 
@@ -128,7 +128,6 @@ void Typing_OnEnter(GameStateMachine* sm)
 
 	curs_set(1);
 
-	// TODO: Implement a countdown
 	StackChar_Free(&data->inputBuffer);
 
 	data->pTextEntry = TextEntry_RandomText();
@@ -183,11 +182,11 @@ void Typing_Input(GameStateMachine* sm)
 	compareInputText(sm, key);
 }
 
-void Typing_Update(GameStateMachine* sm, double delta)
+void Typing_Update(GameStateMachine* sm)
 {
 	TypingData* data = (TypingData *)GameStateMachine_GetData(sm);
 
-	if (Clock_Tick(&data->score.seconds, delta))
+	if (Clock_Tick(&data->score.seconds))
 	{
 		calculateCharsPerSecond(data);
 		data->shouldDraw = true;
@@ -208,7 +207,7 @@ void Typing_Draw(GameStateMachine* sm)
 
 void Typing_Free(GameStateMachine* sm)
 {
-	TypingData* data = (TypingData *)GameStateMachine_GetData(sm);
+	TypingData* data = (TypingData *)GameStateMachine_GetDataByType(sm, GAME_STATE_TYPING);
 
 	StackChar_Free(&data->inputBuffer);
 

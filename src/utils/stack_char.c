@@ -26,14 +26,13 @@ void StackChar_Push(StackChar* pStack, wchar_t newChar)
 
 void StackChar_Pop(StackChar* pStack)
 {
-	if (pStack->head == NULL)
+	if (StackChar_IsEmpty(pStack))
 		return;
 
-	NodeChar* node = NULL;
+	NodeChar* temp = pStack->head;
 
-	node = pStack->head->next;
-	free(pStack->head);
-	pStack->head = node;
+	pStack->head = temp->next;
+	free(temp);
 
 	pStack->size--;
 }
@@ -55,12 +54,9 @@ int StackChar_Size(StackChar* pStack)
 
 void StackChar_Free(StackChar* pStack)
 {
-	if (StackChar_IsEmpty(pStack))
-		return;
-
-	while (pStack->head->next != NULL)
+	while (!StackChar_IsEmpty(pStack))
 		StackChar_Pop(pStack);
 
 	pStack->size = 0;
-	pStack = NULL;
+	pStack->head = NULL;
 }

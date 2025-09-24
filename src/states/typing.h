@@ -41,7 +41,7 @@ typedef struct TypingData
 void Typing_OnEnter(GameStateMachine* sm);
 void Typing_OnExit(GameStateMachine* sm);
 void Typing_Input(GameStateMachine* sm);
-void Typing_Update(GameStateMachine* sm, double delta);
+void Typing_Update(GameStateMachine* sm);
 void Typing_Draw(GameStateMachine* sm);
 
 void Typing_Free(GameStateMachine* sm);

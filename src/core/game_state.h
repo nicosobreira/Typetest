@@ -4,12 +4,11 @@
 #include <stdbool.h>
 
 // Total GameStateType possible values
-#define GAME_STATES_MAX (2)
+#define GAME_STATES_MAX (3)
 
 typedef struct GameStateMachine GameStateMachine;
 
 typedef void (*GameStateFunc)(GameStateMachine* sm);
-typedef void (*GameStateFuncUpdate)(GameStateMachine* sm, double delta);
 
 typedef void* Data;
 
@@ -17,6 +16,7 @@ typedef enum GameStateType
 {
 	GAME_STATE_TYPING,
 	GAME_STATE_MENU,
+	GAME_STATE_SCORE,
 } GameStateType;
 
 typedef struct GameState
@@ -24,7 +24,7 @@ typedef struct GameState
 	GameStateFunc OnEnter;
 	GameStateFunc OnExit;
 	GameStateFunc Input;
-	GameStateFuncUpdate Update;
+	GameStateFunc Update;
 	GameStateFunc Draw;
 	GameStateFunc Free;
 	Data data;
@@ -35,10 +35,15 @@ typedef struct GameStateMachine
 	GameState states[GAME_STATES_MAX];
 	GameState* current;
 	bool isRunning;
+	bool hasSwitch;
 } GameStateMachine;
 
-// Helper function
+// Helper functions
 Data GameStateMachine_GetData(GameStateMachine* sm);
+
+Data GameStateMachine_GetDataByType(GameStateMachine* stateMachine, GameStateType type);
+
+void GameStateMachine_Free(GameStateMachine* stateMachine);
 
 void GameStateMachine_Switch(GameStateMachine* sm, GameStateType type);
 

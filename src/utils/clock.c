@@ -1,5 +1,7 @@
 #include "utils/clock.h"
 
+#include "constants/frames.h" // MS_PER_UPDATE
+
 double Clock_Get(Clock* pClock)
 {
 	return pClock->total;
@@ -12,9 +14,9 @@ void Clock_Set(Clock* pClock, double target)
 	Clock_Reset(pClock);
 }
 
-bool Clock_Tick(Clock* pClock, double step)
+bool Clock_Tick(Clock* pClock)
 {
-	pClock->previous += step;
+	pClock->previous += MS_PER_UPDATE;
 
 	if (pClock->previous >= pClock->target)
 	{
