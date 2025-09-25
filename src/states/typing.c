@@ -114,7 +114,6 @@ static void drawStatus(TypingData* data)
 
 static void calculateCharsPerSecond(TypingData* data)
 {
-	// Question: How much did the inputBuffer grow in one second?
 	double deltaChars = (double)(data->inputBuffer.size);
 	double deltaTime = Clock_Get(&data->score.seconds) / 1000.0;
 
