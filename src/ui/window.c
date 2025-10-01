@@ -17,6 +17,7 @@ static int getPercentageColor(int percentage)
 	{
 		return COLOR_YELLOW;
 	}
+
 	return COLOR_GREEN;
 }
 
@@ -76,8 +77,8 @@ void Window_DrawPercentage(WINDOW* base, int percentage)
 {
 	const int color = getPercentageColor(percentage);
 
-	const int startX = 1;
-	const int startY = 1;
+	const int startX = 0;
+	const int startY = 0;
 
 	const int maxCols = getmaxx(base) - startX * 2;
 
@@ -154,6 +155,7 @@ WindowAttrs Window_SetLayout_Center(WINDOW *base)
 
 	return attrs;
 }
+
 // FIX: The stdscr must be passed as an argument
 WindowAttrs Window_SetLayout_OnTop(WINDOW *onTop, WindowAlign align)
 {

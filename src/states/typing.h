@@ -20,11 +20,9 @@ typedef struct TypingScore
 	double charsPerSecond;
 	double wordsPerMinute;
 	int wrongLetters;
+	int correctLetters;
 } TypingScore;
 
-// FIX: Separate the int cursor into two variables
-// 1. Virtual screen position
-// 2. Current letter in pTextEntry->text
 typedef struct TypingData
 {
 	TypingScore score;
@@ -34,7 +32,6 @@ typedef struct TypingData
 	WINDOW* windowText;
 	Point cursor;
 	int pointerText;
-	int correctLetters;
 	bool shouldDraw;
 } TypingData;
 

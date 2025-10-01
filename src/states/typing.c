@@ -3,8 +3,9 @@
 #include "constants/key_codes.h"
 #include "ui/color.h"
 #include "ui/window.h"
+#include "ui/cursor.h"
 
-static const double SECONDS_CLOCK_UPDATE = 500.0;
+static const double SECONDS_FOR_CLOCK_UPDATE = 500.0;
 
 static void handleBackspace(GameStateMachine* sm)
 {
@@ -13,16 +14,18 @@ static void handleBackspace(GameStateMachine* sm)
 	if (!String_IsIndexValid(&data->pTextEntry->text, data->pointerText - 1))
 		return;
 
+	Cursor_MoveLeft(&data->cursor, data->windowText);
+
 	data->pointerText--;
 
 	wchar_t textChar = String_GetChar(&data->pTextEntry->text, data->pointerText);
 
 	if (textChar == StackChar_Top(&data->inputBuffer))
-		data->correctLetters--;
+		data->score.correctLetters--;
 
 	StackChar_Pop(&data->inputBuffer);
 
-	mvwaddnwstr(data->windowText, 0, data->pointerText, &textChar, 1);
+	mvwaddnwstr(data->windowText, data->cursor.y, data->cursor.x, &textChar, 1);
 }
 
 static void handleCharacterInput(GameStateMachine* sm, wint_t key)
@@ -38,7 +41,7 @@ static void handleCharacterInput(GameStateMachine* sm, wint_t key)
 	wchar_t textChar = String_GetChar(&data->pTextEntry->text, data->pointerText);
 
 	if (character == textChar) {
-		data->correctLetters++;
+		data->score.correctLetters++;
 
 		COLOR_ON(data->windowText, COLOR_GREEN);
 	} else {
@@ -49,18 +52,20 @@ static void handleCharacterInput(GameStateMachine* sm, wint_t key)
 
 	// TODO: if the key is space then set the BACKGROUND color to RED
 
-	mvwaddnwstr(data->windowText, 0, data->pointerText, &character, 1);
+	mvwaddnwstr(data->windowText, data->cursor.y, data->cursor.x, &textChar, 1);
 
 	COLOR_CLEAR(data->windowText);
 
 	// NOTE: Game win
-	if (data->correctLetters >= data->pTextEntry->text.length)
+	if (data->score.correctLetters >= data->pTextEntry->text.length)
 	{
 		GameStateMachine_Switch(sm, GAME_STATE_SCORE);
 		return;
 	}
 
 	data->pointerText++;
+
+	Cursor_MoveRight(&data->cursor, data->windowText);
 }
 
 // TODO: Add support for ENTER
@@ -84,8 +89,8 @@ static void compareInputText(GameStateMachine* sm, wint_t key)
 
 static void drawEntrySpeed(TypingData* data)
 {
-	const int startX = 1;
-	const int startY = 1;
+	const int startX = 0;
+	const int startY = 0;
 
 	const int maxLines = getmaxy(data->windowStatus) - startY * 2;
 
@@ -95,27 +100,26 @@ static void drawEntrySpeed(TypingData* data)
 	mvwprintw(data->windowStatus, maxLines - 1, startX, "WPM: %.0f", data->score.wordsPerMinute);
 }
 
-static void drawStatus(TypingData* data)
+static void statusDraw(TypingData* data)
 {
 	if (!data->shouldDraw)
 		return;
 
-	const int startX = 1;
-	const int startY = 1;
+	const int startX = 0;
+	const int startY = 0;
 
 	drawEntrySpeed(data);
 
 	mvwprintw(data->windowStatus, startX, startY, "Completion:");
 
-	int percentage = 100 * data->correctLetters/data->pTextEntry->text.length;
+	int percentage = 100 * data->score.correctLetters / data->pTextEntry->text.length;
 
 	Window_DrawPercentage(data->windowStatus, percentage);
 }
 
 static void calculateCharsPerSecond(TypingData* data)
 {
-	// Question: How much did the inputBuffer grow in one second?
-	double deltaChars = (double)(data->inputBuffer.size);
+	double deltaChars = (double)(data->score.correctLetters);
 	double deltaTime = Clock_Get(&data->score.seconds) / 1000.0;
 
 	data->score.charsPerSecond = deltaChars / deltaTime;
@@ -132,21 +136,16 @@ void Typing_OnEnter(GameStateMachine* sm)
 
 	data->pTextEntry = TextEntry_RandomText();
 	data->pointerText = 0;
-	data->correctLetters = 0;
 
-	data->cursor.x = 0;
-	data->cursor.y = 0;
+	Cursor_Reset(&data->cursor, data->windowText);
 
-	Clock_Set(&data->score.seconds, SECONDS_CLOCK_UPDATE);
+	Clock_Set(&data->score.seconds, SECONDS_FOR_CLOCK_UPDATE);
 	data->score.charsPerSecond = 0.0;
 	data->score.wordsPerMinute = 0.0;
 	data->score.wrongLetters = 0;
+	data->score.correctLetters = 0;
 
 	Window_DrawString(data->windowText, &data->pTextEntry->text);
-
-	COLOR_ON(data->windowStatus, COLOR_RED);
-	box(data->windowStatus, 0, 0);
-	COLOR_CLEAR(data->windowStatus);
 
 	data->shouldDraw = true;
 }
@@ -169,9 +168,9 @@ void Typing_Input(GameStateMachine* sm)
 	TypingData* data = (TypingData *)GameStateMachine_GetData(sm);
 
 	wint_t key;
-	int returnValue = wget_wch(data->windowText, &key);
+	int hasKeyPressed = wget_wch(data->windowText, &key);
 
-	if (returnValue == ERR)
+	if (hasKeyPressed == ERR)
 	{
 		data->shouldDraw = false;
 		return;
@@ -197,9 +196,9 @@ void Typing_Draw(GameStateMachine* sm)
 {
 	TypingData* data = (TypingData *)GameStateMachine_GetData(sm);
 
-	drawStatus(data);
+	statusDraw(data);
 
-	wmove(data->windowText, 0, data->pointerText);
+	Cursor_Draw(&data->cursor, data->windowText);
 
 	wrefresh(data->windowStatus);
 	wrefresh(data->windowText);
