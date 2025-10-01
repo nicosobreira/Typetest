@@ -9,6 +9,7 @@
 
 #include "utils/clock.h"
 
+#include "utils/point.h"
 #include "core/game_state.h"
 #include "core/text_entry.h"
 #include "utils/stack_char.h"
@@ -19,11 +20,9 @@ typedef struct TypingScore
 	double charsPerSecond;
 	double wordsPerMinute;
 	int wrongLetters;
+	int correctLetters;
 } TypingScore;
 
-// FIX: Separate the int cursor into two variables
-// 1. Virtual screen position
-// 2. Current letter in pTextEntry->text
 typedef struct TypingData
 {
 	TypingScore score;
@@ -31,15 +30,15 @@ typedef struct TypingData
 	TextEntry* pTextEntry;
 	WINDOW* windowStatus;
 	WINDOW* windowText;
+	Point cursor;
 	int pointerText;
-	int correctLetters;
 	bool shouldDraw;
 } TypingData;
 
 void Typing_OnEnter(GameStateMachine* sm);
 void Typing_OnExit(GameStateMachine* sm);
 void Typing_Input(GameStateMachine* sm);
-void Typing_Update(GameStateMachine* sm, double delta);
+void Typing_Update(GameStateMachine* sm);
 void Typing_Draw(GameStateMachine* sm);
 
 void Typing_Free(GameStateMachine* sm);

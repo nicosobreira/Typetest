@@ -7,10 +7,10 @@
 
 #define COLOR_ON(win, color) (wattron(win, COLOR_PAIR(color)))
 
-#define COLOR_CLEAN(win) (wattroff(win, COLOR_PAIR(COLOR_DEFAULT)))
+#define COLOR_CLEAR(win) (wattroff(win, COLOR_PAIR(COLOR_DEFAULT)))
 
 #define BACKGROUND_ON(win, color) (wbkgd(win, COLOR_PAIR(color)))
 
-#define BACKGROUND_CLEAN(win) (wbkgd(win, COLOR_PAIR(COLOR_DEFAULT)))
+#define BACKGROUND_CLEAR(win) (wbkgd(win, COLOR_PAIR(COLOR_DEFAULT)))
 
 #endif // COLOR_H

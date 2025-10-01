@@ -14,7 +14,8 @@ double Clock_Get(Clock* pClock);
 
 void Clock_Set(Clock* pClock, double target);
 
-bool Clock_Tick(Clock* pClock, double step);
+// The clock step is MS_PER_UPDATE
+bool Clock_Tick(Clock* pClock);
 
 void Clock_Reset(Clock* pClock);
 

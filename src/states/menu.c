@@ -44,10 +44,9 @@ void Menu_Input(GameStateMachine* sm)
 	}
 }
 
-void Menu_Update(GameStateMachine* sm, double delta)
+void Menu_Update(GameStateMachine* sm)
 {
 	(void)sm;
-	(void)delta;
 }
 
 void Menu_Draw(GameStateMachine* sm)
@@ -57,7 +56,7 @@ void Menu_Draw(GameStateMachine* sm)
 
 void Menu_Free(GameStateMachine* sm)
 {
-	MenuData* data = (MenuData *)GameStateMachine_GetData(sm);
+	MenuData* data = (MenuData *)GameStateMachine_GetDataByType(sm, GAME_STATE_MENU);
 
 	delwin(data->windowText);
 }

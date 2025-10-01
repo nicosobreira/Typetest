@@ -12,14 +12,10 @@
 #include "core/game_state.h"
 #include "states/typing.h"
 #include "states/menu.h"
+#include "states/score.h"
 #include "utils/error.h"
 
-// 60 ticks per second
-const double MS_PER_UPDATE = 1000.0 / 60.0;
-
-// TODO: Change the String sentence in game to a TextEntry
-
-// NOTE: Screen updates (refresh) are made only when necessary
+#include "constants/frames.h"
 
 static long long getCurrentTimeMs()
 {
@@ -36,13 +32,15 @@ int main(void)
 {
 	Game_Init();
 
-	static TypingData typingData;
-	static MenuData menuData;
+	TypingData typingData;
+	MenuData menuData;
+	ScoreData scoreData;
 
 	GameStateMachine stateMachine;
 
 	stateMachine.states[GAME_STATE_TYPING] = Typing_Constructor(&typingData);
 	stateMachine.states[GAME_STATE_MENU] = Menu_Constructor(&menuData);
+	stateMachine.states[GAME_STATE_SCORE] = Score_Constructor(&scoreData, &typingData.score);
 
 	// NOTE: You can't use GameStateMachine_Switch here because there is no
 	// previous state to call OnExit
@@ -50,6 +48,7 @@ int main(void)
 	stateMachine.current->OnEnter(&stateMachine);
 
 	stateMachine.isRunning = true;
+	stateMachine.hasSwitch = false;
 
 	long long previousTime = getCurrentTimeMs();
 	double lag = 0.0;
@@ -65,7 +64,14 @@ int main(void)
 
 		while (lag >= MS_PER_UPDATE)
 		{
-			stateMachine.current->Update(&stateMachine, MS_PER_UPDATE);
+			stateMachine.current->Update(&stateMachine);
+
+			if (stateMachine.hasSwitch)
+			{
+				stateMachine.hasSwitch = false;
+				continue;
+			}
+
 			lag -= MS_PER_UPDATE;
 		}
 
@@ -73,12 +79,12 @@ int main(void)
 
 		if (lag < MS_PER_UPDATE)
 		{
-			double sleepTimeUs = (MS_PER_UPDATE - lag) * 1000;
+			double sleepTimeUs = (MS_PER_UPDATE - lag) * 1000.0;
 			usleep((useconds_t)sleepTimeUs);
 		}
 	}
 
-	stateMachine.current->Free(&stateMachine);
+	GameStateMachine_Free(&stateMachine);
 
 	endwin();
 

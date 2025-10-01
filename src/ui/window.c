@@ -7,6 +7,16 @@
 #include "utils/my_math.h"
 #include "ui/color.h"
 
+int Window_GetCols(WINDOW* win)
+{
+	return getmaxx(win) - getbegx(win);
+}
+
+int Window_GetLines(WINDOW* win)
+{
+	return getmaxy(win) - getbegy(win);
+}
+
 static int getPercentageColor(int percentage)
 {
 	if (percentage < 30)
@@ -17,6 +27,7 @@ static int getPercentageColor(int percentage)
 	{
 		return COLOR_YELLOW;
 	}
+
 	return COLOR_GREEN;
 }
 
@@ -76,8 +87,8 @@ void Window_DrawPercentage(WINDOW* base, int percentage)
 {
 	const int color = getPercentageColor(percentage);
 
-	const int startX = 1;
-	const int startY = 1;
+	const int startX = 0;
+	const int startY = 0;
 
 	const int maxCols = getmaxx(base) - startX * 2;
 
@@ -106,7 +117,7 @@ void Window_DrawPercentage(WINDOW* base, int percentage)
 
 	mvwaddch(base, perY, perX + index + 1, perArrow);
 
-	COLOR_CLEAN(base);
+	COLOR_CLEAR(base);
 
 	mvwaddch(base, perY, maxCols, perBorderRight);
 }
@@ -154,6 +165,7 @@ WindowAttrs Window_SetLayout_Center(WINDOW *base)
 
 	return attrs;
 }
+
 // FIX: The stdscr must be passed as an argument
 WindowAttrs Window_SetLayout_OnTop(WINDOW *onTop, WindowAlign align)
 {
