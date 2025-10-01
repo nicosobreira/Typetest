@@ -7,6 +7,16 @@
 #include "utils/my_math.h"
 #include "ui/color.h"
 
+int Window_GetCols(WINDOW* win)
+{
+	return getmaxx(win) - getbegx(win);
+}
+
+int Window_GetLines(WINDOW* win)
+{
+	return getmaxy(win) - getbegy(win);
+}
+
 static int getPercentageColor(int percentage)
 {
 	if (percentage < 30)

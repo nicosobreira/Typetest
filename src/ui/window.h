@@ -34,6 +34,10 @@ typedef struct WindowAttrs
 	int lines;
 } WindowAttrs;
 
+int Window_GetCols(WINDOW* win);
+
+int Window_GetLines(WINDOW* win);
+
 WINDOW* Window_New(WINDOW* base, WindowLayout layout, WindowAlign align);
 
 void Window_ClearRectangle(WINDOW* base, int startY, int startX, int endY, int endX);

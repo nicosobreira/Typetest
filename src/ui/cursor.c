@@ -16,7 +16,7 @@ void Cursor_MoveRight(Point* pCursor, WINDOW* win)
 		if (pCursor->y + 1 > maxLines)
 			return;
 
-		pCursor->x = 0;
+		pCursor->x = 1;
 		pCursor->y++;
 		return;
 	}
@@ -36,7 +36,7 @@ void Cursor_MoveLeft(Point* pCursor, WINDOW* win)
 		if (pCursor->y - 1 < beginY)
 			return;
 
-		pCursor->x = maxCols;
+		pCursor->x = maxCols - 1;
 		pCursor->y--;
 		return;
 	}

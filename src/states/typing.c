@@ -50,9 +50,14 @@ static void handleCharacterInput(GameStateMachine* sm, wint_t key)
 		COLOR_ON(data->windowText, COLOR_RED);
 	}
 
-	// TODO: if the key is space then set the BACKGROUND color to RED
+	const wchar_t spaceChar = L'_';
 
-	mvwaddnwstr(data->windowText, data->cursor.y, data->cursor.x, &textChar, 1);
+	if (character == L' ')
+	{
+		mvwaddnwstr(data->windowText, data->cursor.y, data->cursor.x, &spaceChar, 1);
+	} else {
+		mvwaddnwstr(data->windowText, data->cursor.y, data->cursor.x, &textChar, 1);
+	}
 
 	COLOR_CLEAR(data->windowText);
 
