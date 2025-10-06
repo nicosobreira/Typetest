@@ -11,13 +11,14 @@ int main(void)
 {
 	Ncurses_Init();
 
-	// TODO: See if it's a good idea to allocate this memory on the heap
+	// TODO: see if it's a good idea to allocate this memory on the heap
 	TypingData typingData;
 	MenuData menuData;
 	ScoreData scoreData;
 
 	GameStateMachine stateMachine;
 
+	// FIX: this whole declaration in kind ugly
 	stateMachine.states[GAME_STATE_TYPING] = Typing_Constructor(&typingData);
 	stateMachine.states[GAME_STATE_MENU] = Menu_Constructor(&menuData);
 	stateMachine.states[GAME_STATE_SCORE] = Score_Constructor(&scoreData, &typingData.score);

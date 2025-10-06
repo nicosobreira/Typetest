@@ -14,9 +14,10 @@ typedef void* Data;
 
 typedef enum GameStateType
 {
-	GAME_STATE_TYPING,
+	GAME_STATE_TYPING = 0,
 	GAME_STATE_MENU,
 	GAME_STATE_SCORE,
+	GAME_STATE_TOTAL_SIZE,
 } GameStateType;
 
 typedef struct GameState
