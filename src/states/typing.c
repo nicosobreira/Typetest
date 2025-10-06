@@ -238,7 +238,7 @@ GameState Typing_Constructor(TypingData* data)
 
 	data->windowStatus = Window_New(data->windowText, WINDOW_LAYOUT_ON_TOP, WINDOW_ALIGN_LEFT);
 
-	StackChar_New(&data->inputBuffer);
+	StackChar_Init(&data->inputBuffer);
 
 	typing.data = data;
 

@@ -4,7 +4,7 @@
 
 #include "utils/error.h"
 
-void StackChar_New(StackChar* pStack)
+void StackChar_Init(StackChar* pStack)
 {
 	pStack->head = NULL;
 	pStack->size = 0;
@@ -12,7 +12,7 @@ void StackChar_New(StackChar* pStack)
 
 void StackChar_Push(StackChar* pStack, wchar_t newChar)
 {
-	NodeChar* node = (NodeChar *)malloc(sizeof(NodeChar));
+	NodeChar* node = (NodeChar *) malloc(sizeof(NodeChar));
 	if (node == NULL)
 		HANDLE_ERROR(1, "%s", "Failed to create a new stack node");
 

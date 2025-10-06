@@ -16,7 +16,7 @@ typedef struct StackChar
 	int size;
 } StackChar;
 
-void StackChar_New(StackChar* pStack);
+void StackChar_Init(StackChar* pStack);
 
 void StackChar_Push(StackChar* pStack, wchar_t newChar);
 
