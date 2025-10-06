@@ -1,8 +1,8 @@
-#include "utils/stack_char.h"
+#include "Core/utils/stack_char.h"
 
 #include <stdlib.h>
 
-#include "utils/error.h"
+#include "Core/utils/error.h"
 
 void StackChar_Init(StackChar* pStack)
 {

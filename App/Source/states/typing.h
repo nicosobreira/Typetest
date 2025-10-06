@@ -7,12 +7,13 @@
 
 #include <ncursesw/ncurses.h>
 
-#include "utils/clock.h"
+#include "Core/utils/clock.h"
 
-#include "utils/point.h"
-#include "core/game_state.h"
+#include "Core/utils/point.h"
+#include "Core/game_state.h"
+#include "Core/utils/stack_char.h"
+
 #include "core/text_entry.h"
-#include "utils/stack_char.h"
 
 typedef struct TypingScore
 {

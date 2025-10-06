@@ -39,6 +39,9 @@ typedef struct GameStateMachine
 } GameStateMachine;
 
 // Helper functions
+
+void GameStateMachine_MainLoop(GameStateMachine* sm);
+
 Data GameStateMachine_GetData(GameStateMachine* sm);
 
 Data GameStateMachine_GetDataByType(GameStateMachine* stateMachine, GameStateType type);
@@ -48,5 +51,7 @@ void GameStateMachine_Free(GameStateMachine* stateMachine);
 void GameStateMachine_Switch(GameStateMachine* sm, GameStateType type);
 
 void GameStateMachine_Quit(GameStateMachine* sm);
+
+void Ncurses_Init(void);
 
 #endif // GAME_STATE_H

@@ -1,6 +1,6 @@
-#include "utils/clock.h"
+#include "Core/utils/clock.h"
 
-#include "constants/frames.h" // MS_PER_UPDATE
+#include "Core/constants/frames.h" // MS_PER_UPDATE
 
 double Clock_Get(Clock* pClock)
 {

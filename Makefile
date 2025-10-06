@@ -1,7 +1,7 @@
 APP := typetest
 BUILD_DIR := build
 
-BINARY := $(BUILD_DIR)/$(APP)
+BINARY := $(BUILD_DIR)/App/$(APP)
 
 all: $(BUILD_DIR)
 	make -C $(BUILD_DIR)

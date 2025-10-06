@@ -2,8 +2,8 @@
 
 #include <ncursesw/ncurses.h>
 
-#include "constants/key_codes.h"
-#include "ui/window.h"
+#include "Core/constants/key_codes.h"
+#include "Core/ui/window.h"
 
 void Menu_OnEnter(GameStateMachine* sm)
 {

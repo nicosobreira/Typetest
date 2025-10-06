@@ -1,9 +1,9 @@
 #include "states/typing.h"
 
-#include "constants/key_codes.h"
-#include "ui/color.h"
-#include "ui/window.h"
-#include "ui/cursor.h"
+#include "Core/constants/key_codes.h"
+#include "Core/ui/color.h"
+#include "Core/ui/window.h"
+#include "Core/ui/cursor.h"
 
 static const double SECONDS_FOR_CLOCK_UPDATE = 500.0;
 

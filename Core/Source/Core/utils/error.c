@@ -1,4 +1,4 @@
-#include "utils/error.h"
+#include "Core/utils/error.h"
 
 #include <ncurses.h>
 #include <stdio.h>

@@ -12,22 +12,5 @@ set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "" FORCE)
 set(CMAKE_C_FLAGS_DEBUG "-g -Wall")
 set(CMAKE_C_FLAGS_RELEASE "-O2")
 
-# Encontra a biblioteca ncurses
-find_package(Curses REQUIRED)
-include_directories(${CURSES_INCLUDE_DIR})
-
-set(NCURSES_LIB "ncursesw")
-
-# Inclui diretórios com headers
-include_directories(src)
-
-# Busca recursivamente os arquivos .c na pasta src e um nível abaixo
-file(GLOB_RECURSE SOURCE_FILES
-    "src/*.c"
-)
-
-# Cria o executável
-add_executable(${PROJECT_NAME} ${SOURCE_FILES})
-
-# Linka com a biblioteca ncurses
-target_link_libraries(${PROJECT_NAME} ${NCURSES_LIB})
+add_subdirectory(Core)
+add_subdirectory(App)

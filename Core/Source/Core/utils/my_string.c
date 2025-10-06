@@ -1,9 +1,9 @@
-#include "utils/my_string.h"
+#include "Core/utils/my_string.h"
 
 #include <string.h>
 #include <stdlib.h>
 
-#include "utils/error.h"
+#include "Core/utils/error.h"
 
 // NOTE: Need to initialize the length and _allocated
 void String_New(String* pString, wchar_t* letters)

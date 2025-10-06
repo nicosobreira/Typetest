@@ -1,11 +1,11 @@
-#include "ui/window.h"
+#include "Core/ui/window.h"
 
 #include <stdlib.h>
 #include <string.h>
 
-#include "utils/error.h"
-#include "utils/my_math.h"
-#include "ui/color.h"
+#include "Core/utils/error.h"
+#include "Core/utils/my_math.h"
+#include "Core/ui/color.h"
 
 int Window_GetCols(WINDOW* win)
 {

@@ -7,7 +7,7 @@
 
 #include <ncursesw/ncurses.h>
 
-#include "utils/my_string.h"
+#include "Core/utils/my_string.h"
 
 // TODO: Separate into a Layout enum and Aligment enum
 // So a "on_top" layout can be mixed with a "center" aligment, or "left"

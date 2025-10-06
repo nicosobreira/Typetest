@@ -7,7 +7,7 @@
 
 #include <ncursesw/ncurses.h>
 
-#include "core/game_state.h"
+#include "Core/game_state.h"
 
 typedef struct MenuData
 {
