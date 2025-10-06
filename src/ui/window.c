@@ -90,7 +90,7 @@ void Window_DrawPercentage(WINDOW* base, int percentage)
 	const int startX = 0;
 	const int startY = 0;
 
-	const int maxCols = getmaxx(base) - startX * 2;
+	const int maxCols = getmaxx(base) - 1;
 
 	const int perX = startX;
 	const int perY = startY + 1;

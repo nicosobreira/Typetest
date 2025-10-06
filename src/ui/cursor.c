@@ -1,6 +1,6 @@
 #include "ui/cursor.h"
 
-void Cursor_Reset(Point* pCursor, WINDOW* win)
+void Cursor_Reset(Point* pCursor)
 {
 	pCursor->x = 0;
 	pCursor->y = 0;
@@ -8,7 +8,7 @@ void Cursor_Reset(Point* pCursor, WINDOW* win)
 
 void Cursor_MoveRight(Point* pCursor, WINDOW* win)
 {
-	const int maxCols = getmaxx(win);
+	const int maxCols = getmaxx(win) - 1;
 	const int maxLines = getmaxy(win);
 
 	if (pCursor->x + 1 > maxCols)
@@ -16,7 +16,7 @@ void Cursor_MoveRight(Point* pCursor, WINDOW* win)
 		if (pCursor->y + 1 > maxLines)
 			return;
 
-		pCursor->x = 1;
+		pCursor->x = 0;
 		pCursor->y++;
 		return;
 	}
@@ -26,7 +26,7 @@ void Cursor_MoveRight(Point* pCursor, WINDOW* win)
 
 void Cursor_MoveLeft(Point* pCursor, WINDOW* win)
 {
-	const int maxCols = getmaxx(win);
+	const int maxCols = getmaxx(win) - 1;
 
 	const int beginX = 0;
 	const int beginY = 0;
@@ -36,7 +36,7 @@ void Cursor_MoveLeft(Point* pCursor, WINDOW* win)
 		if (pCursor->y - 1 < beginY)
 			return;
 
-		pCursor->x = maxCols - 1;
+		pCursor->x = maxCols;
 		pCursor->y--;
 		return;
 	}

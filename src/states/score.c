@@ -3,8 +3,6 @@
 void Score_OnEnter(GameStateMachine* sm)
 {
 	(void)sm;
-
-	curs_set(0);
 }
 
 void Score_OnExit(GameStateMachine* sm)
@@ -41,7 +39,7 @@ void Score_Draw(GameStateMachine* sm)
 {
 	ScoreData* data = (ScoreData *)GameStateMachine_GetData(sm);
 
-	double totalTime = data->pTypingScore->seconds.total / 1000.0;
+	double totalTime = data->pTypingScore->miliSeconds.total / 1000.0;
 	double wordsPerMinute = data->pTypingScore->wordsPerMinute;
 
 	mvwprintw(data->windowText, 0, 0, "Total time: %.0f", totalTime);

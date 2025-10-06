@@ -16,7 +16,7 @@
 
 typedef struct TypingScore
 {
-	Clock seconds;
+	Clock miliSeconds;
 	double charsPerSecond;
 	double wordsPerMinute;
 	int wrongLetters;

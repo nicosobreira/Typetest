@@ -9,7 +9,7 @@ void Menu_OnEnter(GameStateMachine* sm)
 {
 	MenuData* data = (MenuData *)GameStateMachine_GetData(sm);
 
-	curs_set(0);
+	curs_set(FALSE);
 
 	mvwprintw(data->windowText, 1, 1, "%s", data->title);
 	mvwprintw(data->windowText, 2, 1, "Press [p] to Play");

@@ -101,7 +101,6 @@ void Game_Init(void)
 	if (stdscr == NULL)
 		HANDLE_ERROR(1, "%s", "Failed to initiate the screen");
 
-	curs_set(1);
 	cbreak();
 	noecho();
 
@@ -114,12 +113,13 @@ void Game_ColorInit(void)
 		HANDLE_ERROR(9, "%s", "Your terminal don't support colors");
 
 	start_color();
-	if (COLORS < 256)
-		HANDLE_ERROR(10, "%s", "Your terminal don't support 256 colors");
 
 	use_default_colors();
 	for (short i = 0; i < COLORS; i++) {
-		// Index, foreground, background
-		init_pair(i, i, -1);
+		init_pair(
+			i,  // Index
+			i,  // Foreground
+			-1  // Background
+		);
 	}
 }

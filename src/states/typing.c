@@ -40,24 +40,25 @@ static void handleCharacterInput(GameStateMachine* sm, wint_t key)
 
 	wchar_t textChar = String_GetChar(&data->pTextEntry->text, data->pointerText);
 
-	if (character == textChar) {
+	if (character == textChar)
+	{
 		data->score.correctLetters++;
-
 		COLOR_ON(data->windowText, COLOR_GREEN);
-	} else {
+	}
+	else
+	{
 		data->score.wrongLetters++;
-
 		COLOR_ON(data->windowText, COLOR_RED);
 	}
 
 	const wchar_t spaceChar = L'_';
 
-	if (character == L' ')
+	if (textChar == L' ')
 	{
-		mvwaddnwstr(data->windowText, data->cursor.y, data->cursor.x, &spaceChar, 1);
-	} else {
-		mvwaddnwstr(data->windowText, data->cursor.y, data->cursor.x, &textChar, 1);
+		textChar = spaceChar;
 	}
+
+	mvwaddnwstr(data->windowText, data->cursor.y, data->cursor.x, &textChar, 1);
 
 	COLOR_CLEAR(data->windowText);
 
@@ -69,6 +70,7 @@ static void handleCharacterInput(GameStateMachine* sm, wint_t key)
 	}
 
 	data->pointerText++;
+
 
 	Cursor_MoveRight(&data->cursor, data->windowText);
 }
@@ -99,9 +101,8 @@ static void drawEntrySpeed(TypingData* data)
 
 	const int maxLines = getmaxy(data->windowStatus) - startY * 2;
 
-	Window_ClearRectangle(data->windowStatus, maxLines - 1, startX, maxLines, startX);
+	werase(data->windowStatus);
 
-	mvwprintw(data->windowStatus, maxLines, startX, "CPS: %.0f", data->score.charsPerSecond);
 	mvwprintw(data->windowStatus, maxLines - 1, startX, "WPM: %.0f", data->score.wordsPerMinute);
 }
 
@@ -125,7 +126,7 @@ static void statusDraw(TypingData* data)
 static void calculateCharsPerSecond(TypingData* data)
 {
 	double deltaChars = (double)(data->score.correctLetters);
-	double deltaTime = Clock_Get(&data->score.seconds) / 1000.0;
+	double deltaTime = Clock_Get(&data->score.miliSeconds) / 1000.0;
 
 	data->score.charsPerSecond = deltaChars / deltaTime;
 	data->score.wordsPerMinute = data->score.charsPerSecond * (60.0 / 5.0);
@@ -135,16 +136,16 @@ void Typing_OnEnter(GameStateMachine* sm)
 {
 	TypingData* data = (TypingData *)GameStateMachine_GetData(sm);
 
-	curs_set(1);
+	curs_set(TRUE);
 
 	StackChar_Free(&data->inputBuffer);
 
 	data->pTextEntry = TextEntry_RandomText();
 	data->pointerText = 0;
 
-	Cursor_Reset(&data->cursor, data->windowText);
+	Cursor_Reset(&data->cursor);
 
-	Clock_Set(&data->score.seconds, SECONDS_FOR_CLOCK_UPDATE);
+	Clock_Set(&data->score.miliSeconds, SECONDS_FOR_CLOCK_UPDATE);
 	data->score.charsPerSecond = 0.0;
 	data->score.wordsPerMinute = 0.0;
 	data->score.wrongLetters = 0;
@@ -190,7 +191,7 @@ void Typing_Update(GameStateMachine* sm)
 {
 	TypingData* data = (TypingData *)GameStateMachine_GetData(sm);
 
-	if (Clock_Tick(&data->score.seconds))
+	if (Clock_Tick(&data->score.miliSeconds))
 	{
 		calculateCharsPerSecond(data);
 		data->shouldDraw = true;
