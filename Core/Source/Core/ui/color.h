@@ -1,6 +1,7 @@
 #ifndef COLOR_H
 #define COLOR_H
 
+
 #include <ncursesw/ncurses.h>
 
 #define COLOR_DEFAULT (-1)

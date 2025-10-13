@@ -2,12 +2,15 @@
 
 #include <ncursesw/ncurses.h>
 
+#include "Core/manager/game_manager.h"
 #include "Core/constants/key_codes.h"
 #include "Core/ui/window.h"
 
-void Menu_OnEnter(GameStateMachine* sm)
+#include "states/id.h"
+
+void Menu_OnEnter(GameManager* sm)
 {
-	MenuData* data = (MenuData *)GameStateMachine_GetData(sm);
+	MenuData* data = (MenuData *)GameManager_GetData(sm);
 
 	curs_set(FALSE);
 
@@ -18,52 +21,52 @@ void Menu_OnEnter(GameStateMachine* sm)
 	wrefresh(data->windowText);
 }
 
-void Menu_OnExit(GameStateMachine* sm)
+void Menu_OnExit(GameManager* sm)
 {
-	MenuData* data = (MenuData *)GameStateMachine_GetData(sm);
+	MenuData* data = (MenuData *)GameManager_GetData(sm);
 
 	werase(data->windowText);
 	wrefresh(data->windowText);
 }
 
-void Menu_Input(GameStateMachine* sm)
+void Menu_Input(GameManager* sm)
 {
-	MenuData* data = (MenuData *)GameStateMachine_GetData(sm);
+	MenuData* data = (MenuData *)GameManager_GetData(sm);
 
 	char key = (char)wgetch(data->windowText);
 
 	switch (key)
 	{
 		case 'p':
-			GameStateMachine_Switch(sm, GAME_STATE_TYPING);
+			GameManager_Switch(sm, SCREEN_TYPING);
 			break;
 		case KEY_CODE_BACKSPACE:
 		case 'q':
-			GameStateMachine_Quit(sm);
+			GameManager_Quit(sm);
 			break;
 	}
 }
 
-void Menu_Update(GameStateMachine* sm)
+void Menu_Update(GameManager* sm)
 {
 	(void)sm;
 }
 
-void Menu_Draw(GameStateMachine* sm)
+void Menu_Draw(GameManager* sm)
 {
 	(void)sm;
 }
 
-void Menu_Free(GameStateMachine* sm)
+void Menu_Free(GameManager* sm)
 {
-	MenuData* data = (MenuData *)GameStateMachine_GetDataByType(sm, GAME_STATE_MENU);
+	MenuData* data = (MenuData *)GameManager_GetDataByType(sm, SCREEN_MENU);
 
 	delwin(data->windowText);
 }
 
-GameState Menu_Constructor(MenuData* data)
+GameScreen Menu_Constructor(MenuData* data)
 {
-	GameState menu;
+	GameScreen menu;
 
 	menu.OnEnter = Menu_OnEnter;
 	menu.OnExit = Menu_OnExit;

@@ -7,7 +7,7 @@
 
 #include <ncursesw/ncurses.h>
 
-#include "Core/game_state.h"
+#include "Core/common/definitions.h"
 
 typedef struct MenuData
 {
@@ -15,14 +15,14 @@ typedef struct MenuData
 	char* title;
 } MenuData;
 
-void Menu_OnEnter(GameStateMachine* sm);
-void Menu_OnExit(GameStateMachine* sm);
-void Menu_Input(GameStateMachine* sm);
-void Menu_Update(GameStateMachine* sm);
-void Menu_Draw(GameStateMachine* sm);
+void Menu_OnEnter(GameManager* sm);
+void Menu_OnExit(GameManager* sm);
+void Menu_Input(GameManager* sm);
+void Menu_Update(GameManager* sm);
+void Menu_Draw(GameManager* sm);
 
-void Menu_Free(GameStateMachine* sm);
+void Menu_Free(GameManager* sm);
 
-GameState Menu_Constructor(MenuData* data);
+GameScreen Menu_Constructor(MenuData* data);
 
 #endif // MENU_H
