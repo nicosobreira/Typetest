@@ -5,11 +5,17 @@
 #include "Core/ui/window.h"
 #include "Core/ui/cursor.h"
 
+#include "states/id.h"
+
+#include "Core/manager/game_manager.h"
+
+#include "states/id.h"
+
 static const double SECONDS_FOR_CLOCK_UPDATE = 500.0;
 
-static void handleBackspace(GameStateMachine* sm)
+static void handleBackspace(GameManager* sm)
 {
-	TypingData* data = (TypingData *)GameStateMachine_GetData(sm);
+	TypingData* data = (TypingData *)GameManager_GetData(sm);
 
 	if (!String_IsIndexValid(&data->pTextEntry->text, data->pointerText - 1))
 		return;
@@ -28,9 +34,9 @@ static void handleBackspace(GameStateMachine* sm)
 	mvwaddnwstr(data->windowText, data->cursor.y, data->cursor.x, &textChar, 1);
 }
 
-static void handleCharacterInput(GameStateMachine* sm, wint_t key)
+static void handleCharacterInput(GameManager* sm, wint_t key)
 {
-	TypingData* data = (TypingData *)GameStateMachine_GetData(sm);
+	TypingData* data = (TypingData *)GameManager_GetData(sm);
 
 	if (!String_IsIndexValid(&data->pTextEntry->text, data->pointerText + 1))
 		return;
@@ -65,7 +71,7 @@ static void handleCharacterInput(GameStateMachine* sm, wint_t key)
 	// NOTE: Game win
 	if (data->score.correctLetters >= data->pTextEntry->text.length)
 	{
-		GameStateMachine_Switch(sm, GAME_STATE_SCORE);
+		GameManager_Switch(sm, SCREEN_SCORE);
 		return;
 	}
 
@@ -76,7 +82,7 @@ static void handleCharacterInput(GameStateMachine* sm, wint_t key)
 }
 
 // TODO: Add support for ENTER
-static void compareInputText(GameStateMachine* sm, wint_t key)
+static void compareInputText(GameManager* sm, wint_t key)
 {
 	switch (key)
 	{
@@ -84,7 +90,7 @@ static void compareInputText(GameStateMachine* sm, wint_t key)
 			handleBackspace(sm);
 			break;
 		case KEY_CODE_ESCAPE:
-			GameStateMachine_Switch(sm, GAME_STATE_MENU);
+			GameManager_Switch(sm, SCREEN_MENU);
 			break;
 		case KEY_CODE_ENTER:
 			break;
@@ -132,9 +138,9 @@ static void calculateCharsPerSecond(TypingData* data)
 	data->score.wordsPerMinute = data->score.charsPerSecond * (60.0 / 5.0);
 }
 
-void Typing_OnEnter(GameStateMachine* sm)
+void Typing_OnEnter(GameManager* sm)
 {
-	TypingData* data = (TypingData *)GameStateMachine_GetData(sm);
+	TypingData* data = (TypingData *)GameManager_GetData(sm);
 
 	curs_set(TRUE);
 
@@ -156,9 +162,9 @@ void Typing_OnEnter(GameStateMachine* sm)
 	data->shouldDraw = true;
 }
 
-void Typing_OnExit(GameStateMachine* sm)
+void Typing_OnExit(GameManager* sm)
 {
-	TypingData* data = (TypingData *)GameStateMachine_GetData(sm);
+	TypingData* data = (TypingData *)GameManager_GetData(sm);
 
 	data->shouldDraw = false;
 
@@ -169,9 +175,9 @@ void Typing_OnExit(GameStateMachine* sm)
 	wrefresh(data->windowStatus);
 }
 
-void Typing_Input(GameStateMachine* sm)
+void Typing_Input(GameManager* sm)
 {
-	TypingData* data = (TypingData *)GameStateMachine_GetData(sm);
+	TypingData* data = (TypingData *)GameManager_GetData(sm);
 
 	wint_t key;
 	int hasKeyPressed = wget_wch(data->windowText, &key);
@@ -187,9 +193,9 @@ void Typing_Input(GameStateMachine* sm)
 	compareInputText(sm, key);
 }
 
-void Typing_Update(GameStateMachine* sm)
+void Typing_Update(GameManager* sm)
 {
-	TypingData* data = (TypingData *)GameStateMachine_GetData(sm);
+	TypingData* data = (TypingData *)GameManager_GetData(sm);
 
 	if (Clock_Tick(&data->score.miliSeconds))
 	{
@@ -198,9 +204,9 @@ void Typing_Update(GameStateMachine* sm)
 	}
 }
 
-void Typing_Draw(GameStateMachine* sm)
+void Typing_Draw(GameManager* sm)
 {
-	TypingData* data = (TypingData *)GameStateMachine_GetData(sm);
+	TypingData* data = (TypingData *)GameManager_GetData(sm);
 
 	statusDraw(data);
 
@@ -210,9 +216,9 @@ void Typing_Draw(GameStateMachine* sm)
 	wrefresh(data->windowText);
 }
 
-void Typing_Free(GameStateMachine* sm)
+void Typing_Free(GameManager* sm)
 {
-	TypingData* data = (TypingData *)GameStateMachine_GetDataByType(sm, GAME_STATE_TYPING);
+	TypingData* data = (TypingData *)GameManager_GetDataByType(sm, SCREEN_TYPING);
 
 	StackChar_Free(&data->inputBuffer);
 
@@ -220,9 +226,9 @@ void Typing_Free(GameStateMachine* sm)
 	delwin(data->windowStatus);
 }
 
-GameState Typing_Constructor(TypingData* data)
+GameScreen Typing_Constructor(TypingData* data)
 {
-	GameState typing;
+	GameScreen typing;
 
 	typing.OnEnter = Typing_OnEnter;
 	typing.OnExit = Typing_OnExit;

@@ -1,33 +1,35 @@
-#ifndef _XOPEN_SOURCE_EXTENDED
-#define _XOPEN_SOURCE_EXTENDED 1
-#endif
+#include "Core/manager/game_manager.h"
 
-#include "Core/game_state.h"
+#include "states/id.h"
 #include "states/typing.h"
 #include "states/menu.h"
 #include "states/score.h"
 
+// TODO: Alocar as `Data` na heap
+// TODO: Abstrair a alocação das diferentes `Data`
+
 int main(void)
 {
-	Ncurses_Init();
-
 	// TODO: See if it's a good idea to allocate this memory on the heap
 	TypingData typingData;
 	MenuData menuData;
 	ScoreData scoreData;
 
-	GameStateMachine stateMachine;
+	GameManager gameManager;
 
-	stateMachine.states[GAME_STATE_TYPING] = Typing_Constructor(&typingData);
-	stateMachine.states[GAME_STATE_MENU] = Menu_Constructor(&menuData);
-	stateMachine.states[GAME_STATE_SCORE] = Score_Constructor(&scoreData, &typingData.score);
+	GameManager_Init(&gameManager, SCREEN_TOTAL);
 
-	// NOTE: You can't use GameStateMachine_Switch here because there is no
-	// previous state to call OnExit
-	stateMachine.current = &stateMachine.states[GAME_STATE_MENU];
-	stateMachine.current->OnEnter(&stateMachine);
+	gameManager.screens.data[SCREEN_TYPING] = Typing_Constructor(&typingData);
+	gameManager.screens.data[SCREEN_MENU] = Menu_Constructor(&menuData);
+	gameManager.screens.data[SCREEN_SCORE] = Score_Constructor(
+		&scoreData,
+		&typingData.score
+	);
 
-	GameStateMachine_MainLoop(&stateMachine);
+	gameManager.current = &gameManager.screens.data[SCREEN_MENU];
+	gameManager.current->OnEnter(&gameManager);
+
+	GameManager_MainLoop(&gameManager);
 
 	return 0;
 }

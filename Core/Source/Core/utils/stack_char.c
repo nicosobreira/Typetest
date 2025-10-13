@@ -57,6 +57,6 @@ void StackChar_Free(StackChar* pStack)
 	while (!StackChar_IsEmpty(pStack))
 		StackChar_Pop(pStack);
 
-	pStack->size = 0;
 	pStack->head = NULL;
+	pStack->size = 0;
 }

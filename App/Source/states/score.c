@@ -1,43 +1,47 @@
 #include "states/score.h"
 
-void Score_OnEnter(GameStateMachine* sm)
+#include "Core/manager/game_manager.h"
+
+#include "states/id.h"
+
+void Score_OnEnter(GameManager* gm)
 {
-	(void)sm;
+	(void)gm;
 }
 
-void Score_OnExit(GameStateMachine* sm)
+void Score_OnExit(GameManager* gm)
 {
-	ScoreData* data = (ScoreData *)GameStateMachine_GetData(sm);
+	ScoreData* data = (ScoreData *)GameManager_GetData(gm);
 
 	werase(data->windowText);
 	wrefresh(data->windowText);
 }
 
-void Score_Input(GameStateMachine* sm)
+void Score_Input(GameManager* gm)
 {
-	ScoreData* data = (ScoreData *)GameStateMachine_GetData(sm);
+	ScoreData* data = (ScoreData *)GameManager_GetData(gm);
 
 	char key = (char)wgetch(data->windowText);
 
 	switch (key)
 	{
 		case 'q':
-			GameStateMachine_Quit(sm);
+			GameManager_Quit(gm);
 			break;
 		case 'p':
-			GameStateMachine_Switch(sm, GAME_STATE_TYPING);
+			GameManager_Switch(gm, SCREEN_TYPING);
 			break;
 	}
 }
 
-void Score_Update(GameStateMachine* sm)
+void Score_Update(GameManager* gm)
 {
-	(void)sm;
+	(void)gm;
 }
 
-void Score_Draw(GameStateMachine* sm)
+void Score_Draw(GameManager* gm)
 {
-	ScoreData* data = (ScoreData *)GameStateMachine_GetData(sm);
+	ScoreData* data = (ScoreData *)GameManager_GetData(gm);
 
 	double totalTime = data->pTypingScore->miliSeconds.total / 1000.0;
 	double wordsPerMinute = data->pTypingScore->wordsPerMinute;
@@ -48,16 +52,16 @@ void Score_Draw(GameStateMachine* sm)
 	wrefresh(data->windowText);
 }
 
-void Score_Free(GameStateMachine* sm)
+void Score_Free(GameManager* gm)
 {
-	ScoreData* data = (ScoreData *)GameStateMachine_GetDataByType(sm, GAME_STATE_SCORE);
+	ScoreData* data = (ScoreData *)GameManager_GetDataByType(gm, SCREEN_SCORE);
 
 	delwin(data->windowText);
 }
 
-GameState Score_Constructor(ScoreData* data, TypingScore* pTypingScore)
+GameScreen Score_Constructor(ScoreData* data, TypingScore* pTypingScore)
 {
-	GameState score;
+	GameScreen score;
 
 	score.OnEnter = Score_OnEnter;
 	score.OnExit = Score_OnExit;
