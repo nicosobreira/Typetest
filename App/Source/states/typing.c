@@ -1,13 +1,10 @@
 #include "states/typing.h"
 
+#include "Core/manager/game_manager.h"
 #include "Core/constants/key_codes.h"
 #include "Core/ui/color.h"
 #include "Core/ui/window.h"
 #include "Core/ui/cursor.h"
-
-#include "states/id.h"
-
-#include "Core/manager/game_manager.h"
 
 #include "states/id.h"
 
@@ -207,6 +204,9 @@ void Typing_Update(GameManager* sm)
 void Typing_Draw(GameManager* sm)
 {
 	TypingData* data = (TypingData *)GameManager_GetData(sm);
+
+	if (!data->shouldDraw)
+		return;
 
 	statusDraw(data);
 
