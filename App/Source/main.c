@@ -17,10 +17,7 @@ int main(void)
 
 	GameManager gameManager;
 
-	// FIX: this whole declaration in kind ugly
-	stateMachine.states[GAME_STATE_TYPING] = Typing_Constructor(&typingData);
-	stateMachine.states[GAME_STATE_MENU] = Menu_Constructor(&menuData);
-	stateMachine.states[GAME_STATE_SCORE] = Score_Constructor(&scoreData, &typingData.score);
+	GameManager_Init(&gameManager, SCREEN_TOTAL);
 
 	gameManager.screens.data[SCREEN_TYPING] = Typing_Constructor(&typingData);
 	gameManager.screens.data[SCREEN_MENU] = Menu_Constructor(&menuData);
