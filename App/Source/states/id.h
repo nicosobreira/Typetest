@@ -9,7 +9,6 @@ typedef enum GameScreenId
 	SCREEN_MENU,
 	SCREEN_SCORE,
 	SCREEN_TOTAL,
-
 } GameScreenId;
 
 #endif // ID_H
