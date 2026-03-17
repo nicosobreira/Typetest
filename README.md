@@ -16,3 +16,4 @@ cmake --build build
 
 - [ ] Centralizar a tela inicial.
 - [ ] Melhorar a tela de pontuações.
+- [ ] Criar um sistema de UI de verdade.
