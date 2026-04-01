@@ -190,7 +190,15 @@ static void calculateCharsPerSecond(TypingData *pData)
     double deltaChars = (double)(pData->score.correctLetters);
     double deltaTime = Clock_Get(&pData->score.miliSeconds) / 1000.0;
 
-    pData->score.charsPerSecond = deltaChars / deltaTime;
+    if (deltaTime > 0.0)
+    {
+        pData->score.charsPerSecond = deltaChars / deltaTime;
+    }
+    else
+    {
+        pData->score.charsPerSecond = 0.0;
+    }
+
     pData->score.wordsPerMinute = pData->score.charsPerSecond * (60.0 / 5.0);
 }
 
@@ -253,11 +261,8 @@ void Typing_Update(void *data)
 {
     TypingData *pData = (TypingData *)data;
 
-    if (Clock_Tick(&pData->score.miliSeconds))
-    {
-        calculateCharsPerSecond(data);
-        pData->shouldDraw = true;
-    }
+    (void)Clock_Tick(&pData->score.miliSeconds);
+    calculateCharsPerSecond(data);
 }
 
 void Typing_Draw(void *data)
