@@ -12,7 +12,7 @@ void Score_OnEnter(void *data)
 {
     ScoreData *pData = (ScoreData *)data;
 
-    double totalTime = pData->pTypingScore->miliSeconds.total / 1000.0;
+    double totalTime = Clock_Get(&pData->pTypingScore->miliSeconds) / 1000.0;
     double wpm = pData->pTypingScore->wordsPerMinute;
 
     WINDOW *win = pData->windowText;

@@ -1,88 +1,68 @@
 #include "manager.h"
 
-#include <locale.h>
-#include <ncurses.h>
+#include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/time.h>
 #include <time.h>
 
 #include "Core/constants/frames.h"
-#include "Core/utils/time.h"
+#include "Core/utils/error.h"
 
-static SManager g_SceneManager = {0};
+static SManager g_Manager = {0};
 
-static void Ncurses_Init(void)
+static double getTimeMs(void)
 {
-    setlocale(LC_ALL, "");
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
 
-    srand((unsigned int)time(NULL));
-
-    initscr();
-    if (stdscr == NULL)
-        exit(1);
-    // HANDLE_ERROR(1, "%s", "Failed to initiate the screen");
-
-    cbreak();
-    noecho();
-
-    if (!has_colors())
-        exit(1);
-    // HANDLE_ERROR(9, "%s", "Your terminal don't support colors");
-
-    start_color();
-
-    use_default_colors();
-    for (short i = 0; i < COLORS; i++)
-    {
-        init_pair(i, // Index
-                  i, // Foreground
-                  -1 // Background
-        );
-    }
+    return (double)((double)tv.tv_sec * 1000.0 + (double)tv.tv_usec / 1000.0);
 }
 
 void SceneManager_Init(void)
 {
-    Ncurses_Init();
-
-    g_SceneManager.count = 0;
-    g_SceneManager.pCurrent = NULL;
-    g_SceneManager.shouldClose = false;
+    g_Manager.count = 0;
+    g_Manager.pCurrent = NULL;
+    g_Manager.shouldClose = false;
 }
 
 void SceneManager_Free(void)
 {
-    for (size_t i = 0; i < g_SceneManager.count; i++)
+    for (size_t i = 0; i < g_Manager.count; i++)
     {
-        void *pData = g_SceneManager.scenes[i].pData;
-        g_SceneManager.scenes[i].Free(pData);
+        void *pData = g_Manager.scenes[i].pData;
+        g_Manager.scenes[i].Free(pData);
     }
 }
 
 void SceneManager_Switch(const char *name)
 {
-    for (size_t i = 0; i < g_SceneManager.count; i++)
+    for (size_t i = 0; i < g_Manager.count; i++)
     {
-        if (strcmp(name, g_SceneManager.scenes[i].name) == 0)
+        Scene *pScene = &g_Manager.scenes[i];
+        if (strcmp(name, pScene->name) == 0)
         {
-            Scene_OnExit();
-            g_SceneManager.pCurrent = &g_SceneManager.scenes[i];
+            if (g_Manager.pCurrent)
+            {
+                Scene_OnExit();
+            }
+
+            g_Manager.pCurrent = &g_Manager.scenes[i];
             Scene_OnEnter();
             return;
         }
     }
 
-    // TraceLog(LOG_ERROR, "Unknow scene \"%s\"", name);
-    exit(4);
+    ERROR(3, "Unknow scene \"%s\"", name);
 }
 
 void SceneManager_Loop(void)
 {
-    double previousTime = getCurrentTimeMs();
+    double previousTime = getTimeMs();
     double lag = 0.0;
-    while (!g_SceneManager.shouldClose)
+    while (!g_Manager.shouldClose)
     {
-        double currentTime = getCurrentTimeMs();
+        double currentTime = getTimeMs();
         double elapsedTime = (double)(currentTime - previousTime);
         previousTime = currentTime;
         lag += elapsedTime;
@@ -104,55 +84,82 @@ void SceneManager_Loop(void)
 
 void SceneManager_EndLoop(void)
 {
-    g_SceneManager.shouldClose = true;
+    g_Manager.shouldClose = true;
 }
 
 void SceneManager_Register(Scene (*SceneConstructor)(void))
 {
-    if (g_SceneManager.count + 1 > SCENES_MAX)
+    if (g_Manager.count + 1 > SCENES_MAX)
     {
-        // TraceLog(LOG_ERROR, "SceneManager overflow");
-        exit(2);
+        ERROR(2, "%s", "Manager array overflow");
     }
 
-    int index = g_SceneManager.count;
-    g_SceneManager.scenes[index] = SceneConstructor();
+    int index = g_Manager.count;
+    g_Manager.scenes[index] = SceneConstructor();
 
-    g_SceneManager.count++;
+    g_Manager.count++;
+}
+
+void SceneManager_RegisterScene(Scene *pScene)
+{
+    if (g_Manager.count + 1 > SCENES_MAX)
+    {
+        ERROR(2, "%s", "Manager array overflow");
+    }
+
+    int index = g_Manager.count;
+    g_Manager.scenes[index] = *pScene;
+
+    g_Manager.count++;
+}
+
+void *SceneManager_GetDataByName(const char *name)
+{
+    for (size_t i = 0; i < g_Manager.count; i++)
+    {
+        Scene *pScene = &g_Manager.scenes[i];
+        if (strcmp(name, pScene->name) == 0)
+        {
+            return pScene->pData;
+        }
+    }
+
+    ERROR(3, "Unknow scene \"%s\"", name);
+    return NULL;
 }
 
 void Scene_Free(void)
 {
-    void *pData = g_SceneManager.pCurrent->pData;
-    g_SceneManager.pCurrent->Free(pData);
+    void *pData = g_Manager.pCurrent->pData;
+    g_Manager.pCurrent->Free(pData);
 }
 
 void Scene_OnEnter(void)
 {
-    void *pData = g_SceneManager.pCurrent->pData;
-    g_SceneManager.pCurrent->OnEnter(pData);
+    void *pData = g_Manager.pCurrent->pData;
+    g_Manager.pCurrent->OnEnter(pData);
 }
 
 void Scene_OnExit(void)
 {
-    void *pData = g_SceneManager.pCurrent->pData;
-    g_SceneManager.pCurrent->OnExit(pData);
+    void *pData = g_Manager.pCurrent->pData;
+    g_Manager.pCurrent->OnExit(pData);
 }
 
 void Scene_Input(void)
 {
-    void *pData = g_SceneManager.pCurrent->pData;
-    g_SceneManager.pCurrent->Input(pData);
+    void *pData = g_Manager.pCurrent->pData;
+    g_Manager.pCurrent->Input(pData);
 }
 
 void Scene_Update(void)
 {
-    void *pData = g_SceneManager.pCurrent->pData;
-    g_SceneManager.pCurrent->Update(pData);
+    void *pData = g_Manager.pCurrent->pData;
+    g_Manager.pCurrent->Update(pData);
 }
 
 void Scene_Draw(void)
 {
-    void *pData = g_SceneManager.pCurrent->pData;
-    g_SceneManager.pCurrent->Draw(pData);
+    void *pData = g_Manager.pCurrent->pData;
+    g_Manager.pCurrent->Draw(pData);
 }

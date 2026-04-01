@@ -4,59 +4,59 @@
 
 #include "Core/utils/error.h"
 
-void StackChar_Init(StackChar* pStack)
+void StackChar_Init(StackChar *pStack)
 {
-	pStack->head = NULL;
-	pStack->size = 0;
+    pStack->head = NULL;
+    pStack->size = 0;
 }
 
-void StackChar_Push(StackChar* pStack, wchar_t newChar)
+void StackChar_Push(StackChar *pStack, wchar_t newChar)
 {
-	NodeChar* node = (NodeChar *) malloc(sizeof(NodeChar));
-	if (node == NULL)
-		HANDLE_ERROR(1, "%s", "Failed to create a new stack node");
+    NodeChar *node = (NodeChar *)malloc(sizeof(NodeChar));
+    if (node == NULL)
+        ERROR(1, "%s", "Failed to create a new stack node");
 
-	node->character = newChar;
+    node->character = newChar;
 
-	node->next = pStack->head;
-	pStack->head = node;
+    node->next = pStack->head;
+    pStack->head = node;
 
-	pStack->size++;
+    pStack->size++;
 }
 
-void StackChar_Pop(StackChar* pStack)
+void StackChar_Pop(StackChar *pStack)
 {
-	if (StackChar_IsEmpty(pStack))
-		return;
+    if (StackChar_IsEmpty(pStack))
+        return;
 
-	NodeChar* temp = pStack->head;
+    NodeChar *temp = pStack->head;
 
-	pStack->head = temp->next;
-	free(temp);
+    pStack->head = temp->next;
+    free(temp);
 
-	pStack->size--;
+    pStack->size--;
 }
 
-wchar_t StackChar_Top(StackChar* pStack)
+wchar_t StackChar_Top(StackChar *pStack)
 {
-	return pStack->head->character;
+    return pStack->head->character;
 }
 
-bool StackChar_IsEmpty(StackChar* pStack)
+bool StackChar_IsEmpty(StackChar *pStack)
 {
-	return (pStack->size <= 0);
+    return (pStack->size <= 0);
 }
 
-int StackChar_Size(StackChar* pStack)
+int StackChar_Size(StackChar *pStack)
 {
-	return (pStack->size);
+    return (pStack->size);
 }
 
-void StackChar_Free(StackChar* pStack)
+void StackChar_Free(StackChar *pStack)
 {
-	while (!StackChar_IsEmpty(pStack))
-		StackChar_Pop(pStack);
+    while (!StackChar_IsEmpty(pStack))
+        StackChar_Pop(pStack);
 
-	pStack->head = NULL;
-	pStack->size = 0;
+    pStack->head = NULL;
+    pStack->size = 0;
 }

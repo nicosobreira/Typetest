@@ -52,7 +52,7 @@ void Window_DrawString(WINDOW *base, String *pString)
 void Window_ClearRectangle(WINDOW *base, int startY, int startX, int endY, int endX)
 {
     if (startY > endY || startX > endX)
-        HANDLE_ERROR(1, "%s", "Wrong argument order to function");
+        ERROR(1, "%s", "Wrong argument order to function");
 
     int width = endX - startX + 1;
     char *blanckString = malloc(width + 1);
@@ -76,7 +76,7 @@ WindowAttrs Window_SetLayout(WINDOW *base, WindowLayout layout, WindowAlign alig
     case WINDOW_LAYOUT_CENTER:
         return Window_SetLayout_Center(base);
     default:
-        HANDLE_ERROR(1, "Invalid layout \"%zu\"", layout);
+        ERROR(1, "Invalid layout \"%zu\"", layout);
         break;
     }
 
@@ -114,7 +114,7 @@ WindowAttrs Window_SetLayout_Center(WINDOW *base)
 WindowAttrs Window_SetLayout_OnTop(WINDOW *onTop, WindowAlign align)
 {
     if (onTop == stdscr)
-        HANDLE_ERROR(1, "%s", "No window can be on top of the stdscr");
+        ERROR(1, "%s", "No window can be on top of the stdscr");
 
     const float maxColsStdscr = (float)getmaxx(stdscr);
     const float maxLinesStdscr = (float)getmaxy(stdscr);
@@ -160,7 +160,7 @@ float Window_SetAlign(WindowAlign align, float ref_size, float ref_pos, float ob
     case WINDOW_ALIGN_RIGHT:
         return Window_SetAlign_Right(ref_size, ref_pos, obj_size);
     default:
-        HANDLE_ERROR(1, "%s", "Invalid window aligment");
+        ERROR(1, "%s", "Invalid window aligment");
     }
 
     return 0;
@@ -189,14 +189,14 @@ float Window_SetAlign_Right(float ref_size, float ref_pos, float obj_size)
 void Window_CheckAttrs(WindowAttrs attrs)
 {
     if (attrs.x < 0 || attrs.x > COLS)
-        HANDLE_ERROR(1, "The x value is beyond the stdscr: %d", attrs.x);
+        ERROR(1, "The x value is beyond the stdscr: %d", attrs.x);
 
     if (attrs.cols < 0 || attrs.cols > COLS)
-        HANDLE_ERROR(1, "The cols value is beyond the stdscr: %d", attrs.cols);
+        ERROR(1, "The cols value is beyond the stdscr: %d", attrs.cols);
 
     if (attrs.y < 0 || attrs.y > LINES)
-        HANDLE_ERROR(1, "The y value is beyond the stdscr: %d", attrs.y);
+        ERROR(1, "The y value is beyond the stdscr: %d", attrs.y);
 
     if (attrs.lines < 0 || attrs.lines > LINES)
-        HANDLE_ERROR(1, "The lines value is beyond the stdscr: %d", attrs.lines);
+        ERROR(1, "The lines value is beyond the stdscr: %d", attrs.lines);
 }

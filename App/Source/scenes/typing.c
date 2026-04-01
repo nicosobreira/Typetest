@@ -102,7 +102,10 @@ static void drawEntrySpeed(TypingData *pData)
 
     int maxY = getmaxy(win);
 
-    mvwprintw(win, maxY - 2, 2, "Speed: %.0f WPM", pData->score.wordsPerMinute);
+    double wpm = pData->score.wordsPerMinute;
+    double totalTime = Clock_Get(&pData->score.miliSeconds) / 1000.0;
+
+    mvwprintw(win, maxY - 2, 2, "Speed: %.0f WPM\t\tTime: %.2f", wpm, totalTime);
 }
 
 static int getPercentageColor(int percentage)
@@ -260,6 +263,9 @@ void Typing_Update(void *data)
 void Typing_Draw(void *data)
 {
     TypingData *pData = (TypingData *)data;
+
+    if (!pData->shouldDraw)
+        return;
 
     statusDraw(data);
 

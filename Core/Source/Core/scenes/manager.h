@@ -35,12 +35,14 @@ void SceneManager_EndLoop(void);
 /** Get `pData` from a scene
  * @return The `pData` void pointer (need to cast!)
  */
-void *SceneManager_GetDataByIndex(int index);
+void *SceneManager_GetDataByName(const char *name);
 
 /// Add a Scene to `scenes`.
 /// Also call the `Init` function.
 
 void SceneManager_Register(Scene (*SceneConstructor)(void));
+
+void SceneManager_RegisterScene(Scene *pScene);
 
 void Scene_Free(void);
 

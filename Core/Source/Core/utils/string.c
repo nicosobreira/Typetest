@@ -9,7 +9,7 @@
 void String_New(String *pString, wchar_t *letters)
 {
     if (pString == NULL)
-        HANDLE_ERROR(1, "%s", "Failed to load string");
+        ERROR(1, "%s", "Failed to load string");
 
     pString->length = 0;
     pString->_allocated = 0;
@@ -31,7 +31,7 @@ void String_AllocateMemory(String *pString, size_t allocate)
 
     pString->letters = (wchar_t *)malloc(allocate * sizeof(wchar_t));
     if (pString->letters == NULL)
-        HANDLE_ERROR(1, "%s", "Memory allocation failed");
+        ERROR(1, "%s", "Memory allocation failed");
 
     pString->_allocated += allocate;
 }
@@ -39,7 +39,7 @@ void String_AllocateMemory(String *pString, size_t allocate)
 wchar_t String_GetChar(String *pString, int index)
 {
     if (!String_IsIndexValid(pString, index))
-        HANDLE_ERROR(1, "%s", "Invalid index");
+        ERROR(1, "%s", "Invalid index");
 
     return pString->letters[index];
 }
