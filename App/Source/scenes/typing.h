@@ -7,13 +7,14 @@
 
 #include <ncursesw/ncurses.h>
 
-#include "Core/common/definitions.h"
-
+#include "Core/scenes/scene.h"
 #include "Core/utils/clock.h"
 #include "Core/utils/point.h"
 #include "Core/utils/stack_char.h"
 
 #include "core/text_entry.h"
+
+#define SCENE_TYPING ("typing")
 
 typedef struct TypingScore
 {
@@ -36,14 +37,14 @@ typedef struct TypingData
     bool shouldDraw;
 } TypingData;
 
-void Typing_OnEnter(GameManager *sm);
-void Typing_OnExit(GameManager *sm);
-void Typing_Input(GameManager *sm);
-void Typing_Update(GameManager *sm);
-void Typing_Draw(GameManager *sm);
+void Typing_OnEnter(void *data);
+void Typing_OnExit(void *data);
+void Typing_Input(void *data);
+void Typing_Update(void *data);
+void Typing_Draw(void *data);
 
-void Typing_Free(GameManager *sm);
+void Typing_Free(void *data);
 
-GameScreen Typing_Constructor(TypingData *data);
+Scene Typing_Scene(void);
 
 #endif // TYPING_H

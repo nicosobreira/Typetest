@@ -1,28 +1,19 @@
-#include "Core/manager/game_manager.h"
+#include "Core/scenes/manager.h"
 
-#include "states/id.h"
-#include "states/menu.h"
-#include "states/score.h"
-#include "states/typing.h"
+#include "scenes/menu.h"
+#include "scenes/score.h"
+#include "scenes/typing.h"
 
 int main(void)
 {
-    TypingData typingData;
-    MenuData menuData;
-    ScoreData scoreData;
+    SceneManager_Init();
 
-    GameManager gameManager;
+    SceneManager_Register(Menu_Scene);
+    SceneManager_Register(Typing_Scene);
 
-    GameManager_Init(&gameManager, SCREEN_TOTAL);
+    // SceneManager_Register(Score_Scene);
 
-    gameManager.screens.data[SCREEN_TYPING] = Typing_Constructor(&typingData);
-    gameManager.screens.data[SCREEN_MENU] = Menu_Constructor(&menuData);
-    gameManager.screens.data[SCREEN_SCORE] = Score_Constructor(&scoreData, &typingData.score);
-
-    gameManager.current = &gameManager.screens.data[SCREEN_MENU];
-    gameManager.current->OnEnter(&gameManager);
-
-    GameManager_MainLoop(&gameManager);
+    SceneManager_Loop();
 
     return 0;
 }
