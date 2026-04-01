@@ -2,18 +2,12 @@
 
 Test you typing skills!
 
-![Screenshot](github/demo.gif)
+![Demo](github/demo.gif)
 
 ## Build
 
-```bash
+``` bash
 cmake -B build
 cmake --build build
 ./build/App/typetest
 ```
-
-## Todo
-
-- [ ] Centralizar a tela inicial.
-- [ ] Melhorar a tela de pontuações.
-- [ ] Criar um sistema de UI de verdade.
