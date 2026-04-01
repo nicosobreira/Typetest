@@ -13,7 +13,7 @@
 #ifdef _WIN32
 #include <windows.h>
 
-static long long getCurrentTimeMs()
+static long long getCurrentTimeMs(void)
 {
     return GetTickCount64();
 }
@@ -21,7 +21,7 @@ static long long getCurrentTimeMs()
 #else
 #include <sys/time.h>
 
-static long long getCurrentTimeMs()
+static long long getCurrentTimeMs(void)
 {
     struct timeval tv;
     gettimeofday(&tv, NULL);

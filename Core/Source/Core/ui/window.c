@@ -4,7 +4,7 @@
 #include <string.h>
 
 #include "Core/utils/error.h"
-#include "Core/utils/my_math.h"
+#include "Core/utils/math.h"
 
 int Window_GetCols(WINDOW *win)
 {
