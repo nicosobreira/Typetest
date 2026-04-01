@@ -14,6 +14,7 @@ void Score_OnEnter(void *data)
 
     double totalTime = Clock_Get(&pData->pTypingScore->miliSeconds) / 1000.0;
     double wpm = pData->pTypingScore->wordsPerMinute;
+    double cps = pData->pTypingScore->charsPerSecond;
 
     WINDOW *win = pData->windowText;
 
@@ -29,7 +30,7 @@ void Score_OnEnter(void *data)
     mvwprintw(win, 4, 15, "%.2fs", totalTime);
 
     mvwprintw(win, 5, 2, "Speed:");
-    mvwprintw(win, 5, 15, "%.0f WPM", wpm);
+    mvwprintw(win, 5, 15, "%.0f WPM / %.0f CPS", wpm, cps);
 
     // Input options
     mvwhline(win, 7, 1, ACS_HLINE, Window_GetCols(win));

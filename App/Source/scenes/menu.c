@@ -23,7 +23,7 @@ void Menu_OnEnter(void *data)
 
     char *title = "Typetest";
     int titleX = (width - strlen(title)) / 2;
-    mvwprintw(win, 2, titleX, "%s", title);
+    mvwprintw(win, 1, titleX, "%s", title);
 
     mvwhline(win, 3, 1, ACS_HLINE, width - 2);
 

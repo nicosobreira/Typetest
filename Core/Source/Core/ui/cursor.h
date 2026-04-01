@@ -9,12 +9,12 @@
 
 #include "Core/utils/point.h"
 
-void Cursor_Reset(Point* pCursor);
+void Cursor_Reset(Point *pCursor);
 
-void Cursor_MoveRight(Point* pCursor, WINDOW* win);
+void Cursor_MoveRight(Point *pCursor, WINDOW *win);
 
-void Cursor_MoveLeft(Point* pCursor, WINDOW* win);
+void Cursor_MoveLeft(Point *pCursor, WINDOW *win);
 
-void Cursor_Draw(Point* pCursor, WINDOW* win);
+void Cursor_Draw(Point *pCursor, WINDOW *win);
 
 #endif // CURSOR_H
