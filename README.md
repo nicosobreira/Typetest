@@ -2,7 +2,7 @@
 
 Test you typing skills!
 
-![Screenshot](github/screenshot.png)
+![Screenshot](github/demo.gif)
 
 ## Build
 
