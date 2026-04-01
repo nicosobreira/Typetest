@@ -1,9 +1,9 @@
 #include "Core/utils/my_math.h"
 
-int returnMinInt(int a, int b)
+int minInt(int a, int b)
 {
-	if (a < b)
-		return a;
+    if (a < b)
+        return a;
 
-	return b;
+    return b;
 }

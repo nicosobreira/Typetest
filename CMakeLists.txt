@@ -1,16 +1,51 @@
-cmake_minimum_required(VERSION 3.10)
-project(typetest C)
+cmake_minimum_required(VERSION 3.15)
 
-# Define o padrão da linguagem C
-set(CMAKE_C_STANDARD 11)
-set(CMAKE_C_STANDARD_REQUIRED ON)
+project(typetest
+  LANGUAGES C
+)
 
-# Define os modos de compilação
-set(CMAKE_CONFIGURATION_TYPES "Debug;Release" CACHE STRING "" FORCE)
-
-# Adiciona opções de compilação por modo
-set(CMAKE_C_FLAGS_DEBUG "-g -Wall")
-set(CMAKE_C_FLAGS_RELEASE "-O2")
+# Compiler flags and properties
+add_library(project_flags INTERFACE)
 
 add_subdirectory(Core)
 add_subdirectory(App)
+
+set(DEBUG_FLAGS
+  -g
+  -DDEBUG
+)
+
+set(RELEASE_FLAGS
+  -O3
+  -DNDEBUG
+)
+
+set(RELWITHDEFINFO_FLAGS
+  -O3
+  -g
+  -fno-omit-frame-pointer
+  -DNDEBUG
+)
+
+if (MSVC)
+  target_compile_options(project_flags INTERFACE /W4)
+else()
+  target_compile_options(project_flags INTERFACE
+    $<$<CONFIG:Debug>:${DEBUG_FLAGS}>
+    $<$<CONFIG:Release>:${RELEASE_FLAGS}>
+    $<$<CONFIG:RelWithDebInfo>:${RELWITHDEBINFO_FLAGS}>
+  )
+
+  target_compile_options(project_flags INTERFACE
+    -Wall
+    -Wextra
+    -pedantic
+    -Wpedantic
+    -Wshadow
+    # -Wconversion
+    -Wformat=2
+    -Werror
+  )
+endif()
+
+target_compile_features(project_flags INTERFACE c_std_11)

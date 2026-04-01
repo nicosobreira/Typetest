@@ -2,13 +2,40 @@
 
 #include <stdlib.h> // rand, srand
 
+#include "Core/utils/string.h"
 #include "assets/samples.h"
 
-TextEntry* TextEntry_RandomText(void)
+static TextDifficulty getStringDifficulty(String *pString)
 {
-	size_t randomEntry = rand() % TEXT_SAMPLES_LENGTH;
+    size_t length = pString->length;
+    if (length < 15)
+    {
+        return TEXT_DIFFICULTY_EASY;
+    }
+    else if (length < 45)
+    {
 
-	TextEntry* pEntry = &TEXT_SAMPLES[randomEntry];
+        return TEXT_DIFFICULTY_EASY;
+    }
+    else
+    {
 
-	return pEntry;
+        return TEXT_DIFFICULTY_EASY;
+    }
+}
+
+TextEntry TextEntry_RandomText(void)
+{
+    size_t randomEntry = rand() % TEXT_SAMPLES_LENGTH;
+
+    wchar_t **pText = &TEXT_SAMPLES[randomEntry];
+
+    String string;
+    String_New(&string, *pText);
+
+    TextDifficulty dif = getStringDifficulty(&string);
+
+    TextEntry entry = {.text = string, .difficulty = dif};
+
+    return entry;
 }

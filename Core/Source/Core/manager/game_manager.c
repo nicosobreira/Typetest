@@ -3,131 +3,142 @@
 #include <locale.h>
 #include <ncursesw/ncurses.h>
 #include <stdlib.h> // rand, srand
-#include <time.h> // time
-#include <sys/time.h>
+#include <time.h>   // time
 #include <unistd.h> // usleep
 
-#include "Core/screen/game_screen_pool.h"
 #include "Core/constants/frames.h"
+#include "Core/screen/game_screen_pool.h"
 #include "Core/utils/error.h"
+
+#ifdef _WIN32
+#include <windows.h>
 
 static long long getCurrentTimeMs()
 {
-	struct timeval tv;
-	gettimeofday(&tv, NULL);
-	return (long long)tv.tv_sec * 1000 + (long long)tv.tv_usec / 1000;
+    return GetTickCount64();
 }
 
-void GameManager_Init(GameManager* gm, int screensTotal)
+#else
+#include <sys/time.h>
+
+static long long getCurrentTimeMs()
 {
-	Ncurses_Init();
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    return (long long)tv.tv_sec * 1000 + (long long)tv.tv_usec / 1000;
+}
+#endif
 
-	GameScreenPool_Init(&gm->screens, screensTotal);
+void GameManager_Init(GameManager *gm, int screensTotal)
+{
+    Ncurses_Init();
 
-	gm->current = NULL;
-	gm->status = GAME_MANAGER_RUNNING;
+    GameScreenPool_Init(&gm->screens, screensTotal);
+
+    gm->current = NULL;
+    gm->status = GAME_MANAGER_RUNNING;
 }
 
-void GameManager_MainLoop(GameManager* gm)
+void GameManager_MainLoop(GameManager *gm)
 {
-	long long previousTime = getCurrentTimeMs();
-	double lag = 0.0;
+    long long previousTime = getCurrentTimeMs();
+    double lag = 0.0;
 
-	while (gm->status != GAME_MANAGER_QUIT)
-	{
-		long long currentTime = getCurrentTimeMs();
-		double elapsedTime = (double)(currentTime - previousTime);
-		previousTime = currentTime;
-		lag += elapsedTime;
+    while (gm->status != GAME_MANAGER_QUIT)
+    {
+        long long currentTime = getCurrentTimeMs();
+        double elapsedTime = (double)(currentTime - previousTime);
+        previousTime = currentTime;
+        lag += elapsedTime;
 
-		gm->current->Input(gm);
+        gm->current->Input(gm);
 
-		if (gm->status == GAME_MANAGER_SWITCH)
-		{
-			gm->status = GAME_MANAGER_RUNNING;
-			continue;
-		}
+        if (gm->status == GAME_MANAGER_SWITCH)
+        {
+            gm->status = GAME_MANAGER_RUNNING;
+            continue;
+        }
 
-		while (lag >= MS_PER_UPDATE)
-		{
-			gm->current->Update(gm);
+        while (lag >= MS_PER_UPDATE)
+        {
+            gm->current->Update(gm);
 
-			lag -= MS_PER_UPDATE;
-		}
+            lag -= MS_PER_UPDATE;
+        }
 
-		gm->current->Draw(gm);
+        gm->current->Draw(gm);
 
-		if (lag < MS_PER_UPDATE)
-		{
-			double sleepTimeUs = (MS_PER_UPDATE - lag) * 1000.0;
-			usleep((useconds_t)sleepTimeUs);
-		}
-	}
+        if (lag < MS_PER_UPDATE)
+        {
+            double sleepTimeUs = (MS_PER_UPDATE - lag) * 1000.0;
+            usleep((useconds_t)sleepTimeUs);
+        }
+    }
 
-	GameManager_Free(gm);
+    GameManager_Free(gm);
 
-	endwin();
+    endwin();
 }
 
-Data GameManager_GetData(GameManager* gm)
+Data GameManager_GetData(GameManager *gm)
 {
-	return (gm->current->data);
+    return (gm->current->data);
 }
 
-Data GameManager_GetDataByType(GameManager* gm, int type)
+Data GameManager_GetDataByType(GameManager *gm, int type)
 {
-	GameScreenPool* pPool = &gm->screens;
-	return (GameScreenPool_GetDataById(pPool, type));
+    GameScreenPool *pPool = &gm->screens;
+    return (GameScreenPool_GetDataById(pPool, type));
 }
 
-void GameManager_Free(GameManager* gm)
+void GameManager_Free(GameManager *gm)
 {
-	GameScreenPool* pPool = &gm->screens;
-	GameScreenPool_Free(pPool, gm);
+    GameScreenPool *pPool = &gm->screens;
+    GameScreenPool_Free(pPool, gm);
 
-	gm->current = NULL;
+    gm->current = NULL;
 }
 
-void GameManager_Switch(GameManager* gm, int type)
+void GameManager_Switch(GameManager *gm, int type)
 {
-	gm->current->OnExit(gm);
+    gm->current->OnExit(gm);
 
-	GameScreenPool* pPool = &gm->screens;
-	gm->current = GameScreenPool_GetScreen(pPool, type);
-	gm->current->OnEnter(gm);
+    GameScreenPool *pPool = &gm->screens;
+    gm->current = GameScreenPool_GetScreen(pPool, type);
+    gm->current->OnEnter(gm);
 
-	gm->status = GAME_MANAGER_SWITCH;
+    gm->status = GAME_MANAGER_SWITCH;
 }
 
-void GameManager_Quit(GameManager* gm)
+void GameManager_Quit(GameManager *gm)
 {
-	gm->status = GAME_MANAGER_QUIT;
+    gm->status = GAME_MANAGER_QUIT;
 }
 
 void Ncurses_Init(void)
 {
-	setlocale(LC_ALL, "");
+    setlocale(LC_ALL, "");
 
-	srand((unsigned int)time(NULL));
+    srand((unsigned int)time(NULL));
 
-	initscr();
-	if (stdscr == NULL)
-		HANDLE_ERROR(1, "%s", "Failed to initiate the screen");
+    initscr();
+    if (stdscr == NULL)
+        HANDLE_ERROR(1, "%s", "Failed to initiate the screen");
 
-	cbreak();
-	noecho();
+    cbreak();
+    noecho();
 
-	if (!has_colors())
-		HANDLE_ERROR(9, "%s", "Your terminal don't support colors");
+    if (!has_colors())
+        HANDLE_ERROR(9, "%s", "Your terminal don't support colors");
 
-	start_color();
+    start_color();
 
-	use_default_colors();
-	for (short i = 0; i < COLORS; i++) {
-		init_pair(
-			i, // Index
-			i, // Foreground
-			-1 // Background
-		);
-	}
+    use_default_colors();
+    for (short i = 0; i < COLORS; i++)
+    {
+        init_pair(i, // Index
+                  i, // Foreground
+                  -1 // Background
+        );
+    }
 }

@@ -4,19 +4,17 @@ include_directories(${CURSES_INCLUDE_DIR})
 
 set(NCURSES_LIB "ncursesw")
 
-# Busca recursivamente os arquivos .c na pasta src e um nível abaixo
-file(GLOB_RECURSE SOURCES
-  "Source/Core/*.c"
+file(GLOB_RECURSE CORE_SOURCES CONFIGURE_DEPENDS
+  Source/Core/*.c
 )
 
-# Cria o executável
-add_library(Core STATIC)
+add_library(Core)
 
-target_sources(Core PRIVATE ${SOURCES})
+target_sources(Core PRIVATE ${CORE_SOURCES})
 
-source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${SOURCES})
+target_link_libraries(Core PUBLIC
+  project_flags
+  ${NCURSES_LIB}
+)
 
-# Linka com a biblioteca ncurses
-target_link_libraries(Core ${NCURSES_LIB})
-
-target_include_directories(Core PUBLIC "Source")
+target_include_directories(Core PUBLIC Source)

@@ -1,35 +1,28 @@
 #include "Core/manager/game_manager.h"
 
 #include "states/id.h"
-#include "states/typing.h"
 #include "states/menu.h"
 #include "states/score.h"
-
-// TODO: Alocar as `Data` na heap
-// TODO: Abstrair a alocação das diferentes `Data`
+#include "states/typing.h"
 
 int main(void)
 {
-	// TODO: See if it's a good idea to allocate this memory on the heap
-	TypingData typingData;
-	MenuData menuData;
-	ScoreData scoreData;
+    TypingData typingData;
+    MenuData menuData;
+    ScoreData scoreData;
 
-	GameManager gameManager;
+    GameManager gameManager;
 
-	GameManager_Init(&gameManager, SCREEN_TOTAL);
+    GameManager_Init(&gameManager, SCREEN_TOTAL);
 
-	gameManager.screens.data[SCREEN_TYPING] = Typing_Constructor(&typingData);
-	gameManager.screens.data[SCREEN_MENU] = Menu_Constructor(&menuData);
-	gameManager.screens.data[SCREEN_SCORE] = Score_Constructor(
-		&scoreData,
-		&typingData.score
-	);
+    gameManager.screens.data[SCREEN_TYPING] = Typing_Constructor(&typingData);
+    gameManager.screens.data[SCREEN_MENU] = Menu_Constructor(&menuData);
+    gameManager.screens.data[SCREEN_SCORE] = Score_Constructor(&scoreData, &typingData.score);
 
-	gameManager.current = &gameManager.screens.data[SCREEN_MENU];
-	gameManager.current->OnEnter(&gameManager);
+    gameManager.current = &gameManager.screens.data[SCREEN_MENU];
+    gameManager.current->OnEnter(&gameManager);
 
-	GameManager_MainLoop(&gameManager);
+    GameManager_MainLoop(&gameManager);
 
-	return 0;
+    return 0;
 }

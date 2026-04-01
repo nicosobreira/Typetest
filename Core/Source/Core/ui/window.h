@@ -7,49 +7,47 @@
 
 #include <ncursesw/ncurses.h>
 
-#include "Core/utils/my_string.h"
+#include "Core/utils/string.h"
 
 // TODO: Separate into a Layout enum and Aligment enum
 // So a "on_top" layout can be mixed with a "center" aligment, or "left"
 typedef enum WindowLayout
 {
-	WINDOW_LAYOUT_NULL, // NOTE: Used for skipping layout and just align
-	WINDOW_LAYOUT_ON_TOP,
-	WINDOW_LAYOUT_CENTER,
+    WINDOW_LAYOUT_NULL, // NOTE: Used for skipping layout and just align
+    WINDOW_LAYOUT_ON_TOP,
+    WINDOW_LAYOUT_CENTER,
 } WindowLayout;
 
 typedef enum WindowAlign
 {
-	WINDOW_ALIGN_NULL,
-	WINDOW_ALIGN_CENTER,
-	WINDOW_ALIGN_RIGHT,
-	WINDOW_ALIGN_LEFT,
+    WINDOW_ALIGN_NULL,
+    WINDOW_ALIGN_CENTER,
+    WINDOW_ALIGN_RIGHT,
+    WINDOW_ALIGN_LEFT,
 } WindowAlign;
 
 typedef struct WindowAttrs
 {
-	int x;
-	int y;
-	int cols;
-	int lines;
+    int x;
+    int y;
+    int cols;
+    int lines;
 } WindowAttrs;
 
-int Window_GetCols(WINDOW* win);
+int Window_GetCols(WINDOW *win);
 
-int Window_GetLines(WINDOW* win);
+int Window_GetLines(WINDOW *win);
 
-WINDOW* Window_New(WINDOW* base, WindowLayout layout, WindowAlign align);
+WINDOW *Window_New(WINDOW *base, WindowLayout layout, WindowAlign align);
 
-void Window_ClearRectangle(WINDOW* base, int startY, int startX, int endY, int endX);
-
-void Window_DrawPercentage(WINDOW* base, int percentage);
+void Window_ClearRectangle(WINDOW *base, int startY, int startX, int endY, int endX);
 
 /// Has wrap line support
-void Window_DrawString(WINDOW* base, String* pString);
+void Window_DrawString(WINDOW *base, String *pString);
 
 void Window_CheckAttrs(WindowAttrs attrs);
 
-WindowAttrs Window_SetLayout(WINDOW* base, WindowLayout layout, WindowAlign align);
+WindowAttrs Window_SetLayout(WINDOW *base, WindowLayout layout, WindowAlign align);
 
 WindowAttrs Window_SetLayout_Center(WINDOW *base);
 
