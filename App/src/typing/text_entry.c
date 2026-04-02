@@ -1,13 +1,13 @@
-#include "core/text_entry.h"
+#include "typing/text_entry.h"
 
 #include <stdlib.h> // rand, srand
 
 #include "Core/utils/string.h"
-#include "assets/samples.h"
+#include "typing/samples.h"
 
 static TextDifficulty getStringDifficulty(String *pString)
 {
-    size_t length = pString->length;
+    size_t length = String_Length(pString);
     if (length < 15)
     {
         return TEXT_DIFFICULTY_EASY;

@@ -1,4 +1,4 @@
-#include "assets/samples.h"
+#include "samples.h"
 
 wchar_t *TEXT_SAMPLES[] = {
     L"Olá, mundo!",

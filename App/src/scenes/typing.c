@@ -1,4 +1,4 @@
-#include "scenes/typing.h"
+#include "typing.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -21,7 +21,7 @@ static void handleBackspace(TypingData *self)
 
     self->pointerText--;
 
-    wchar_t textChar = String_GetChar(&self->entry.text, self->pointerText);
+    wchar_t textChar = String_GetAt(&self->entry.text, self->pointerText);
 
     if (textChar == StackChar_Top(&self->input))
         self->score.correctLetters--;
@@ -39,7 +39,7 @@ static void handleCharacterInput(TypingData *self, wint_t key)
     wchar_t character = (wchar_t)key;
     StackChar_Push(&self->input, character);
 
-    wchar_t textChar = String_GetChar(&self->entry.text, self->pointerText);
+    wchar_t textChar = String_GetAt(&self->entry.text, self->pointerText);
 
     if (character == textChar)
     {
@@ -64,7 +64,8 @@ static void handleCharacterInput(TypingData *self, wint_t key)
     COLOR_CLEAR(self->windowText);
 
     // NOTE: Game win
-    if (self->score.correctLetters >= (int)self->entry.text.length)
+    int length = String_Length(&self->entry.text);
+    if (self->score.correctLetters >= length)
     {
         SceneManager_Switch(SCENE_SCORE);
         return;
@@ -177,7 +178,8 @@ static void statusDraw(TypingData *self)
 
     mvwhline(win, 2, 1, ACS_HLINE, maxX - 2);
 
-    int percentage = 100 * self->score.correctLetters / self->entry.text.length;
+    int length = String_Length(&self->entry.text);
+    int percentage = 100 * self->score.correctLetters / length;
 
     drawPercentage(win, percentage);
 

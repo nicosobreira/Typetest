@@ -1,4 +1,4 @@
-#include "Core/utils/error.h"
+#include "error.h"
 
 #include <ncurses.h>
 #include <signal.h>

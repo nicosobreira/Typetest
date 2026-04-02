@@ -5,23 +5,26 @@
 #include <stddef.h>
 #include <wchar.h>
 
+#include "Core/utils/stack_char.h"
+
+/// A StackChar wrapper that doesn't own it's memory
 typedef struct String
 {
-    size_t length;
-    size_t _allocated;
-    wchar_t *letters;
+    StackChar buffer;
 } String;
 
 void String_New(String *string, wchar_t *letters);
 
-wchar_t String_GetChar(String *pString, int index);
+wchar_t String_GetAt(String *pString, size_t index);
 
-bool String_IsIndexValid(String *pString, int index);
+const wchar_t *String_GetPointerAt(String *pString, size_t index);
 
-bool String_IsCharAtIndexEqual(String *pString, int index, wchar_t match);
+size_t String_Length(String *pString);
 
-void String_AllocateMemory(String *pString, size_t allocate);
+bool String_IsIndexValid(String *pString, size_t index);
 
-void String_Free(String *pString);
+bool String_IsCharAtIndexEqual(String *pString, size_t index, wchar_t match);
+
+void String_Clear(String *pString);
 
 #endif // STRING_H

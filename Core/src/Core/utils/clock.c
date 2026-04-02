@@ -1,4 +1,4 @@
-#include "Core/utils/clock.h"
+#include "clock.h"
 
 #include "Core/constants/frames.h" // MS_PER_UPDATE
 

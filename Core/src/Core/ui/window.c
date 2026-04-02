@@ -33,7 +33,7 @@ void Window_DrawString(WINDOW *base, String *pString)
     const int maxCols = getmaxx(base) - startX * 2;
     const int maxLines = getmaxy(base) - startY * 2;
 
-    int totalLength = pString->length;
+    int totalLength = String_Length(pString);
     int currentLine = startY;
 
     for (int i = 0; i < totalLength; i += maxCols)
@@ -43,7 +43,7 @@ void Window_DrawString(WINDOW *base, String *pString)
         if (currentLine > maxLines)
             break;
 
-        mvwaddnwstr(base, currentLine, startX, &pString->letters[i], sliceLength);
+        mvwaddnwstr(base, currentLine, startX, String_GetPointerAt(pString, i), sliceLength);
 
         currentLine++;
     }

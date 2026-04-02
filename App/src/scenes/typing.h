@@ -13,7 +13,7 @@
 #include "Core/utils/point.h"
 #include "Core/utils/stack_char.h"
 
-#include "core/text_entry.h"
+#include "typing/text_entry.h"
 
 #define SCENE_TYPING ("typing")
 #define GAME_TICK_MS (MS_PER_UPDATE * 10)

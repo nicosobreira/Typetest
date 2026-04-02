@@ -1,66 +1,52 @@
-#include "Core/utils/string.h"
+#include "string.h"
 
-#include <stdlib.h>
-#include <string.h>
+#include <wchar.h>
 
 #include "Core/utils/error.h"
 
-// NOTE: Need to initialize the length and _allocated
 void String_New(String *pString, wchar_t *letters)
 {
-    if (pString == NULL)
-        ERROR(1, "%s", "Failed to load string");
-
-    pString->length = 0;
-    pString->_allocated = 0;
-
-    // FIX: The current way WON'T WORK with text that are not in the sample
-    // Need to add dynamic allocation
-
-    // String_AllocateMemory(pString, length);
-    // wcscpy(pString->letters, letters);
-    size_t length = wcslen(letters);
-    pString->length = (int)length;
-    pString->letters = letters;
+    pString->buffer.array = letters;
+    pString->buffer.length = wcslen(letters);
+    pString->buffer.capacity = pString->buffer.length;
 }
 
-void String_AllocateMemory(String *pString, size_t allocate)
-{
-    if (pString->_allocated > allocate)
-        return;
-
-    pString->letters = (wchar_t *)malloc(allocate * sizeof(wchar_t));
-    if (pString->letters == NULL)
-        ERROR(1, "%s", "Memory allocation failed");
-
-    pString->_allocated += allocate;
-}
-
-wchar_t String_GetChar(String *pString, int index)
+wchar_t String_GetAt(String *pString, size_t index)
 {
     if (!String_IsIndexValid(pString, index))
         ERROR(1, "%s", "Invalid index");
 
-    return pString->letters[index];
+    return pString->buffer.array[index];
 }
 
-bool String_IsIndexValid(String *pString, int index)
+const wchar_t *String_GetPointerAt(String *pString, size_t index)
 {
-    return (index >= 0 && index < (int)pString->length + 1);
+    if (!String_IsIndexValid(pString, index))
+        ERROR(1, "%s", "Invalid index");
+
+    return &pString->buffer.array[index];
 }
 
-bool String_IsCharAtIndexEqual(String *pString, int index, wchar_t match)
+size_t String_Length(String *pString)
 {
-    wchar_t character = String_GetChar(pString, index);
+    return pString->buffer.length;
+}
+
+bool String_IsIndexValid(String *pString, size_t index)
+{
+    return (index < String_Length(pString));
+}
+
+bool String_IsCharAtIndexEqual(String *pString, size_t index, wchar_t match)
+{
+    wchar_t character = String_GetAt(pString, index);
 
     return (character == match);
 }
 
-void String_Free(String *pString)
+void String_Clear(String *pString)
 {
-    // free(pString->letters);
-    pString->letters = NULL;
-    pString->length = 0;
-    pString->_allocated = 0;
-    pString = NULL;
+    pString->buffer.array = NULL;
+    pString->buffer.length = 0;
+    pString->buffer.capacity = 0;
 }
