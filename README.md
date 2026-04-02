@@ -7,7 +7,7 @@ Test you typing skills!
 ## Build
 
 ``` bash
-cmake -B build
+cmake --preset release # Or debug
 cmake --build build
 ./build/App/typetest
 ```
