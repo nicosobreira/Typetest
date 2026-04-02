@@ -5,7 +5,7 @@ include_directories(${CURSES_INCLUDE_DIR})
 set(NCURSES_LIB "ncursesw")
 
 file(GLOB_RECURSE APP_SOURCES CONFIGURE_DEPENDS
-  Source/*.c
+  src/*.c
 )
 
 add_executable(${PROJECT_NAME})
@@ -16,4 +16,4 @@ target_link_libraries(${PROJECT_NAME}
   Core
 )
 
-target_include_directories(${PROJECT_NAME} PRIVATE Source)
+target_include_directories(${PROJECT_NAME} PRIVATE src)

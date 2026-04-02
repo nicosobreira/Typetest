@@ -5,7 +5,7 @@ include_directories(${CURSES_INCLUDE_DIR})
 set(NCURSES_LIB "ncursesw")
 
 file(GLOB_RECURSE CORE_SOURCES CONFIGURE_DEPENDS
-  Source/Core/*.c
+  src/Core/*.c
 )
 
 add_library(Core)
@@ -17,4 +17,4 @@ target_link_libraries(Core PUBLIC
   ${NCURSES_LIB}
 )
 
-target_include_directories(Core PUBLIC Source)
+target_include_directories(Core PUBLIC src)
