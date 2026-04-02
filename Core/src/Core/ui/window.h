@@ -9,11 +9,8 @@
 
 #include "Core/utils/string.h"
 
-// TODO: Separate into a Layout enum and Aligment enum
-// So a "on_top" layout can be mixed with a "center" aligment, or "left"
 typedef enum WindowLayout
 {
-    WINDOW_LAYOUT_NULL, // NOTE: Used for skipping layout and just align
     WINDOW_LAYOUT_ON_TOP,
     WINDOW_LAYOUT_CENTER,
 } WindowLayout;
@@ -26,13 +23,13 @@ typedef enum WindowAlign
     WINDOW_ALIGN_LEFT,
 } WindowAlign;
 
-typedef struct WindowAttrs
+typedef struct WindowGeometry
 {
     int x;
     int y;
     int cols;
     int lines;
-} WindowAttrs;
+} WindowGeometry;
 
 int Window_GetCols(WINDOW *win);
 
@@ -45,13 +42,13 @@ void Window_ClearRectangle(WINDOW *base, int startY, int startX, int endY, int e
 /// Has wrap line support
 void Window_DrawString(WINDOW *base, String *pString);
 
-void Window_CheckAttrs(WindowAttrs attrs);
+void Window_CheckAttrs(WindowGeometry geom);
 
-WindowAttrs Window_SetLayout(WINDOW *base, WindowLayout layout, WindowAlign align);
+WindowGeometry Window_SetLayout(WINDOW *base, WindowLayout layout, WindowAlign align);
 
-WindowAttrs Window_SetLayout_Center(WINDOW *base);
+WindowGeometry Window_SetLayout_Center(WINDOW *base);
 
-WindowAttrs Window_SetLayout_OnTop(WINDOW *base, WindowAlign align);
+WindowGeometry Window_SetLayout_OnTop(WINDOW *base, WindowAlign align);
 
 float Window_SetAlign(WindowAlign align, float ref_size, float ref_pos, float obj_size);
 

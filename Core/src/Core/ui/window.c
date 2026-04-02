@@ -18,10 +18,10 @@ int Window_GetLines(WINDOW *win)
 
 WINDOW *Window_New(WINDOW *base, WindowLayout layout, WindowAlign align)
 {
-    WindowAttrs attrs = Window_SetLayout(base, layout, align);
-    Window_CheckAttrs(attrs);
+    WindowGeometry geom = Window_SetLayout(base, layout, align);
+    Window_CheckAttrs(geom);
 
-    WINDOW *window = newwin(attrs.lines, attrs.cols, attrs.y, attrs.x);
+    WINDOW *window = newwin(geom.lines, geom.cols, geom.y, geom.x);
 
     return window;
 }
@@ -67,7 +67,7 @@ void Window_ClearRectangle(WINDOW *base, int startY, int startX, int endY, int e
     free(blanckString);
 }
 
-WindowAttrs Window_SetLayout(WINDOW *base, WindowLayout layout, WindowAlign align)
+WindowGeometry Window_SetLayout(WINDOW *base, WindowLayout layout, WindowAlign align)
 {
     switch (layout)
     {
@@ -80,10 +80,10 @@ WindowAttrs Window_SetLayout(WINDOW *base, WindowLayout layout, WindowAlign alig
         break;
     }
 
-    return (WindowAttrs){0};
+    return (WindowGeometry){0};
 }
 
-WindowAttrs Window_SetLayout_Center(WINDOW *base)
+WindowGeometry Window_SetLayout_Center(WINDOW *base)
 {
     const float maxCols = (float)getmaxx(base);
     const float maxLines = (float)getmaxy(base);
@@ -100,18 +100,17 @@ WindowAttrs Window_SetLayout_Center(WINDOW *base)
     float x = (maxCols - cols) / 2.0f;
     float y = (maxLines - lines) / 2.0f;
 
-    WindowAttrs attrs = {
+    WindowGeometry geom = {
         .x = (int)x,
         .y = (int)y,
         .cols = (int)cols,
         .lines = (int)lines,
     };
 
-    return attrs;
+    return geom;
 }
 
-// FIX: The stdscr must be passed as an argument
-WindowAttrs Window_SetLayout_OnTop(WINDOW *onTop, WindowAlign align)
+WindowGeometry Window_SetLayout_OnTop(WINDOW *onTop, WindowAlign align)
 {
     if (onTop == stdscr)
         ERROR(1, "%s", "No window can be on top of the stdscr");
@@ -127,7 +126,7 @@ WindowAttrs Window_SetLayout_OnTop(WINDOW *onTop, WindowAlign align)
     // FIX: This values are hard coded
     // Those values must be passed as arguments, in a struct called Attributes
     // or Positions
-    const float colsFactor = 0.4f;
+    const float colsFactor = 0.8f;
     const float linesFactor = 0.2f;
 
     float cols = maxColsStdscr * colsFactor;
@@ -139,14 +138,14 @@ WindowAttrs Window_SetLayout_OnTop(WINDOW *onTop, WindowAlign align)
     const float offset = .0f;
     float y = beginLines - lines - offset;
 
-    WindowAttrs attrs = {
+    WindowGeometry geom = {
         .x = (int)x,
         .y = (int)y,
         .cols = (int)cols,
         .lines = (int)lines,
     };
 
-    return attrs;
+    return geom;
 }
 
 float Window_SetAlign(WindowAlign align, float ref_size, float ref_pos, float obj_size)
@@ -186,17 +185,17 @@ float Window_SetAlign_Right(float ref_size, float ref_pos, float obj_size)
     return obj_size;
 }
 
-void Window_CheckAttrs(WindowAttrs attrs)
+void Window_CheckAttrs(WindowGeometry geom)
 {
-    if (attrs.x < 0 || attrs.x > COLS)
-        ERROR(1, "The x value is beyond the stdscr: %d", attrs.x);
+    if (geom.x < 0 || geom.x > COLS)
+        ERROR(1, "The x value is beyond the stdscr: %d", geom.x);
 
-    if (attrs.cols < 0 || attrs.cols > COLS)
-        ERROR(1, "The cols value is beyond the stdscr: %d", attrs.cols);
+    if (geom.cols < 0 || geom.cols > COLS)
+        ERROR(1, "The cols value is beyond the stdscr: %d", geom.cols);
 
-    if (attrs.y < 0 || attrs.y > LINES)
-        ERROR(1, "The y value is beyond the stdscr: %d", attrs.y);
+    if (geom.y < 0 || geom.y > LINES)
+        ERROR(1, "The y value is beyond the stdscr: %d", geom.y);
 
-    if (attrs.lines < 0 || attrs.lines > LINES)
-        ERROR(1, "The lines value is beyond the stdscr: %d", attrs.lines);
+    if (geom.lines < 0 || geom.lines > LINES)
+        ERROR(1, "The lines value is beyond the stdscr: %d", geom.lines);
 }
