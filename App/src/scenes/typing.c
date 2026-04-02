@@ -33,13 +33,15 @@ static void handleBackspace(TypingData *self)
 
 static void handleCharacterInput(TypingData *self, wint_t key)
 {
-    if (!String_IsIndexValid(&self->entry.text, self->pointerText + 1))
+    String *pText = &self->entry.text;
+
+    if (!String_IsIndexValid(pText, self->pointerText))
         return;
 
     wchar_t character = (wchar_t)key;
     StackChar_Push(&self->input, character);
 
-    wchar_t textChar = String_GetAt(&self->entry.text, self->pointerText);
+    wchar_t textChar = String_GetAt(pText, self->pointerText);
 
     if (character == textChar)
     {
@@ -64,7 +66,7 @@ static void handleCharacterInput(TypingData *self, wint_t key)
     COLOR_CLEAR(self->windowText);
 
     // NOTE: Game win
-    int length = String_Length(&self->entry.text);
+    int length = String_Length(pText);
     if (self->score.correctLetters >= length)
     {
         SceneManager_Switch(SCENE_SCORE);
