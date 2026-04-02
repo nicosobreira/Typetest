@@ -10,13 +10,13 @@
 
 void Score_OnEnter(void *data)
 {
-    ScoreData *pData = (ScoreData *)data;
+    ScoreData *self = (ScoreData *)data;
 
-    double totalTime = Clock_Get(&pData->pTypingScore->miliSeconds) / 1000.0;
-    double wpm = pData->pTypingScore->wordsPerMinute;
-    double cps = pData->pTypingScore->charsPerSecond;
+    double totalTime = Clock_Get(&self->pScore->totalTimeMs) / 1000.0;
+    double wpm = self->pScore->wordsPerMinute;
+    double cps = self->pScore->charsPerSecond;
 
-    WINDOW *win = pData->windowText;
+    WINDOW *win = self->window;
 
     curs_set(FALSE);
     box(win, 0, 0);
@@ -41,22 +41,22 @@ void Score_OnEnter(void *data)
 
 void Score_OnExit(void *data)
 {
-    ScoreData *pData = (ScoreData *)data;
+    ScoreData *self = (ScoreData *)data;
 
-    werase(pData->windowText);
-    wrefresh(pData->windowText);
+    werase(self->window);
+    wrefresh(self->window);
 }
 
 void Score_Input(void *data)
 {
-    ScoreData *pData = (ScoreData *)data;
+    ScoreData *self = (ScoreData *)data;
 
-    char key = (char)wgetch(pData->windowText);
+    char key = (char)wgetch(self->window);
 
     switch (key)
     {
     case 'q':
-        SceneManager_EndLoop();
+        SceneManager_Close();
         break;
     case 'r':
         SceneManager_Switch(SCENE_TYPING);
@@ -79,21 +79,20 @@ void Score_Draw(void *data)
 
 void Score_Free(void *data)
 {
-    ScoreData *pData = (ScoreData *)data;
+    ScoreData *self = (ScoreData *)data;
 
-    delwin(pData->windowText);
+    delwin(self->window);
 
     free(data);
     data = NULL;
 }
 
-Scene Score_Scene(TypingScore *pTypingScore)
+Scene Score_Scene(TypingScore *pScore)
 {
-    ScoreData *pData = malloc(sizeof(ScoreData));
+    ScoreData *self = malloc(sizeof(ScoreData));
     Scene scene = {
-        .pData = pData,
+        .pData = self,
         .name = SCENE_SCORE,
-
         .OnEnter = Score_OnEnter,
         .OnExit = Score_OnExit,
         .Input = Score_Input,
@@ -102,12 +101,12 @@ Scene Score_Scene(TypingScore *pTypingScore)
         .Free = Score_Free,
     };
 
-    pData->pTypingScore = pTypingScore;
+    self->pScore = pScore;
 
-    pData->windowText = Window_New(stdscr, WINDOW_LAYOUT_CENTER, WINDOW_ALIGN_CENTER);
+    self->window = Window_New(stdscr, WINDOW_LAYOUT_CENTER, WINDOW_ALIGN_CENTER);
 
-    nodelay(pData->windowText, TRUE);
-    notimeout(pData->windowText, TRUE);
+    nodelay(self->window, TRUE);
+    notimeout(self->window, TRUE);
 
     return scene;
 }

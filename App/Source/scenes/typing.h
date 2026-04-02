@@ -7,6 +7,7 @@
 
 #include <ncursesw/ncurses.h>
 
+#include "Core/constants/frames.h"
 #include "Core/scenes/scene.h"
 #include "Core/utils/clock.h"
 #include "Core/utils/point.h"
@@ -15,10 +16,11 @@
 #include "core/text_entry.h"
 
 #define SCENE_TYPING ("typing")
+#define GAME_TICK_MS (MS_PER_UPDATE * 10)
 
 typedef struct TypingScore
 {
-    Clock miliSeconds;
+    Clock totalTimeMs;
     double charsPerSecond;
     double wordsPerMinute;
     int wrongLetters;
@@ -28,8 +30,8 @@ typedef struct TypingScore
 typedef struct TypingData
 {
     TypingScore score;
-    StackChar inputBuffer;
-    TextEntry textEntry;
+    StackChar input;
+    TextEntry entry;
     WINDOW *windowStatus;
     WINDOW *windowText;
     Point cursor;

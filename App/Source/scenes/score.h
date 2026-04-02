@@ -15,8 +15,8 @@
 
 typedef struct ScoreData
 {
-    TypingScore *pTypingScore;
-    WINDOW *windowText;
+    TypingScore *pScore;
+    WINDOW *window;
 } ScoreData;
 
 void Score_OnEnter(void *gm);

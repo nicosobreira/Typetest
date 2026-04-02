@@ -4,21 +4,22 @@
 #include <stdbool.h>
 #include <wchar.h>
 
-typedef struct NodeChar
-{
-    wchar_t character;
-    struct NodeChar *next;
-} NodeChar;
+#define STACK_CAPACITY (1024)
 
 typedef struct StackChar
 {
-    NodeChar *head;
-    int size;
+    wchar_t *array;
+    size_t length;
+    size_t capacity;
 } StackChar;
 
 void StackChar_Init(StackChar *pStack);
 
-void StackChar_Push(StackChar *pStack, wchar_t newChar);
+void StackChar_Free(StackChar *pStack);
+
+void StackChar_Clear(StackChar *pStack);
+
+void StackChar_Push(StackChar *pStack, wchar_t new);
 
 void StackChar_Pop(StackChar *pStack);
 
@@ -26,8 +27,6 @@ wchar_t StackChar_Top(StackChar *pStack);
 
 bool StackChar_IsEmpty(StackChar *pStack);
 
-int StackChar_Size(StackChar *pStack);
-
-void StackChar_Free(StackChar *pStack);
+size_t StackChar_Size(StackChar *pStack);
 
 #endif // STACK_CHAR_H

@@ -3,6 +3,6 @@
 
 #define FPS (60.0)
 
-extern const double MS_PER_UPDATE;
+#define MS_PER_UPDATE (1000.0 / FPS)
 
 #endif // FRAMES_H

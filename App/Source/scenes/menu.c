@@ -12,8 +12,8 @@
 
 void Menu_OnEnter(void *data)
 {
-    MenuData *pData = (MenuData *)data;
-    WINDOW *win = pData->windowText;
+    MenuData *self = (MenuData *)data;
+    WINDOW *win = self->windowText;
 
     curs_set(FALSE);
     werase(win);
@@ -46,17 +46,17 @@ void Menu_OnEnter(void *data)
 
 void Menu_OnExit(void *data)
 {
-    MenuData *pData = (MenuData *)data;
+    MenuData *self = (MenuData *)data;
 
-    werase(pData->windowText);
-    wrefresh(pData->windowText);
+    werase(self->windowText);
+    wrefresh(self->windowText);
 }
 
 void Menu_Input(void *data)
 {
-    MenuData *pData = (MenuData *)data;
+    MenuData *self = (MenuData *)data;
 
-    char key = (char)wgetch(pData->windowText);
+    char key = (char)wgetch(self->windowText);
 
     switch (key)
     {
@@ -65,7 +65,7 @@ void Menu_Input(void *data)
         break;
     case KEY_CODE_BACKSPACE:
     case 'q':
-        SceneManager_EndLoop();
+        SceneManager_Close();
         break;
     }
 }
@@ -82,9 +82,9 @@ void Menu_Draw(void *data)
 
 void Menu_Free(void *data)
 {
-    MenuData *pData = (MenuData *)data;
+    MenuData *self = (MenuData *)data;
 
-    delwin(pData->windowText);
+    delwin(self->windowText);
 
     free(data);
     data = NULL;
@@ -92,11 +92,11 @@ void Menu_Free(void *data)
 
 Scene Menu_Scene(void)
 {
-    MenuData *pData = malloc(sizeof(MenuData));
+    MenuData *self = malloc(sizeof(MenuData));
 
     Scene scene = {
-        .pData = pData,
         .name = SCENE_MENU,
+        .pData = self,
         .OnEnter = Menu_OnEnter,
         .OnExit = Menu_OnExit,
         .Input = Menu_Input,
@@ -105,10 +105,10 @@ Scene Menu_Scene(void)
         .Free = Menu_Free,
     };
 
-    pData->windowText = Window_New(stdscr, WINDOW_LAYOUT_CENTER, WINDOW_ALIGN_NULL);
+    self->windowText = Window_New(stdscr, WINDOW_LAYOUT_CENTER, WINDOW_ALIGN_NULL);
 
-    nodelay(pData->windowText, TRUE);
-    notimeout(pData->windowText, TRUE);
+    nodelay(self->windowText, TRUE);
+    notimeout(self->windowText, TRUE);
 
     return scene;
 }

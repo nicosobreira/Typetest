@@ -6,57 +6,63 @@
 
 void StackChar_Init(StackChar *pStack)
 {
-    pStack->head = NULL;
-    pStack->size = 0;
-}
+    pStack->array = NULL;
+    pStack->length = 0;
+    pStack->capacity = STACK_CAPACITY;
 
-void StackChar_Push(StackChar *pStack, wchar_t newChar)
-{
-    NodeChar *node = (NodeChar *)malloc(sizeof(NodeChar));
-    if (node == NULL)
-        ERROR(1, "%s", "Failed to create a new stack node");
-
-    node->character = newChar;
-
-    node->next = pStack->head;
-    pStack->head = node;
-
-    pStack->size++;
-}
-
-void StackChar_Pop(StackChar *pStack)
-{
-    if (StackChar_IsEmpty(pStack))
-        return;
-
-    NodeChar *temp = pStack->head;
-
-    pStack->head = temp->next;
-    free(temp);
-
-    pStack->size--;
-}
-
-wchar_t StackChar_Top(StackChar *pStack)
-{
-    return pStack->head->character;
-}
-
-bool StackChar_IsEmpty(StackChar *pStack)
-{
-    return (pStack->size <= 0);
-}
-
-int StackChar_Size(StackChar *pStack)
-{
-    return (pStack->size);
+    pStack->array = malloc(sizeof(wchar_t) * pStack->capacity);
+    if (!pStack->array)
+        ERROR(10, "%s", "Alocation failed");
 }
 
 void StackChar_Free(StackChar *pStack)
 {
-    while (!StackChar_IsEmpty(pStack))
-        StackChar_Pop(pStack);
+    free(pStack->array);
+    pStack->array = NULL;
+    pStack->length = 0;
+    pStack->capacity = 0;
+}
 
-    pStack->head = NULL;
-    pStack->size = 0;
+void StackChar_Clear(StackChar *pStack)
+{
+    pStack->length = 0;
+}
+
+void StackChar_Push(StackChar *pStack, wchar_t new)
+{
+    if (pStack->length + 1 > pStack->capacity)
+    {
+        pStack->capacity *= 2;
+
+        pStack->array = realloc(pStack->array, pStack->capacity);
+        if (!pStack->array)
+            ERROR(10, "%s", "Reallocation failed");
+    }
+
+    pStack->length++;
+
+    pStack->array[pStack->length] = new;
+}
+
+void StackChar_Pop(StackChar *pStack)
+{
+    if (pStack->length == 0)
+        return;
+
+    pStack->length--;
+}
+
+wchar_t StackChar_Top(StackChar *pStack)
+{
+    return pStack->array[pStack->length];
+}
+
+bool StackChar_IsEmpty(StackChar *pStack)
+{
+    return (pStack->length == 0);
+}
+
+size_t StackChar_Size(StackChar *pStack)
+{
+    return (pStack->length);
 }

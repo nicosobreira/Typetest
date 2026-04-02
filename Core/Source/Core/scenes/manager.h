@@ -20,7 +20,7 @@ typedef struct SceneManager
     /// Total of possible scenes.
     size_t count;
     bool shouldClose;
-} SManager;
+} SceneManager;
 
 void SceneManager_Init(void);
 
@@ -30,7 +30,7 @@ void SceneManager_Switch(const char *name);
 
 void SceneManager_Loop(void);
 
-void SceneManager_EndLoop(void);
+void SceneManager_Close(void);
 
 /** Get `pData` from a scene
  * @return The `pData` void pointer (need to cast!)

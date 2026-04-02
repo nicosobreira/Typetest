@@ -9,7 +9,30 @@
 #include "Core/constants/frames.h"
 #include "Core/utils/error.h"
 
-static SManager g_Manager = {0};
+static SceneManager g_Manager = {0};
+
+#ifdef _WIN32
+
+#include <windows.h>
+
+static double getTimeMs(void)
+{
+    static LARGE_INTEGER frequency;
+    static int initialized = 0;
+
+    if (!initialized)
+    {
+        QueryPerformanceFrequency(&frequency);
+        initialized = 1;
+    }
+
+    LARGE_INTEGER counter;
+    QueryPerformanceCounter(&counter);
+
+    return (double)(counter.QuadPart * 1000.0 / frequency.QuadPart);
+}
+
+#else
 
 static double getTimeMs(void)
 {
@@ -18,6 +41,8 @@ static double getTimeMs(void)
 
     return (double)((double)tv.tv_sec * 1000.0 + (double)tv.tv_usec / 1000.0);
 }
+
+#endif // _WIN32
 
 void SceneManager_Init(void)
 {
@@ -82,7 +107,7 @@ void SceneManager_Loop(void)
     SceneManager_Free();
 }
 
-void SceneManager_EndLoop(void)
+void SceneManager_Close(void)
 {
     g_Manager.shouldClose = true;
 }
