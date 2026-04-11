@@ -14,6 +14,7 @@
 // Teste: O som foi adicionado
 
 // Exemplo: Código que exibe fogos de artifícios
+// Exemplo: Código que faz os fogos de artifícios terem um som
 
 static void ncursesInit(void)
 {
