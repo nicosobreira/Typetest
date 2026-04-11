@@ -14,6 +14,7 @@
 // Teste: O som foi adicionado
 
 // Exemplo: As partículas foram adicionadas
+// Exemplo: Agora os sons da particulas funcionam!
 
 static void ncursesInit(void)
 {
