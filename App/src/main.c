@@ -13,6 +13,8 @@
 
 // Teste: O som foi adicionado
 
+// Exemplo: Código que exibe fogos de artifícios
+
 static void ncursesInit(void)
 {
     setlocale(LC_ALL, "");
