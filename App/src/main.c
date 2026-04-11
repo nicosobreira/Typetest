@@ -13,6 +13,8 @@
 
 // Teste: O som foi adicionado
 
+// Exemplo: As partículas foram adicionadas
+
 static void ncursesInit(void)
 {
     setlocale(LC_ALL, "");
