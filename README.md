@@ -2,7 +2,7 @@
 
 A minimalist terminal-based type trainer written in C, powered by `ncurses`.
 
-![Demo](github/demo.gif)
+![Demo](.github/demo.gif)
 
 ## Features
 
