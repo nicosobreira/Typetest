@@ -6,14 +6,14 @@ A minimalist terminal-based type trainer written in C, powered by `ncurses`.
 
 ## Features
 
-- **Scene-based architecture** driven by a fixed-timestep game loop (`Input` → fixed `Update` steps at `MS_PER_UPDATE` → `Draw`), so simulation rate stays decoupled from input polling and rendering.
+- **Scene-based architecture** driven by a fixed-timestep game loop, so simulation rate stays decoupled from input polling and rendering.
 - **Live typing feedback**.
 - **A small custom "engine" (`Core`)**:
-  - Window layout & alignment helpers built on top of raw `ncurses` windows
-  - Cursor movement clamped to a window's bounds
-  - A fixed-timestep `Clock`
-  - A centralized `ERROR()` macro for consistent diagnostics and clean shutdown
-  - Lightweight data structures (a `wchar_t` stack, a non-owning `String` view) purpose-built for the typing buffer
+  - Window layout & alignment helpers built on top of raw `ncurses` windows;
+  - Cursor movement clamped to a window's bounds;
+  - A fixed-timestep `Clock`;
+  - A centralized `ERROR()` macro for consistent diagnostics and clean shutdown;
+  - Lightweight data structures (a `wchar_t` stack, a non-owning `String` view) purpose-built for the typing buffer.
 - **Sample bank** of Portuguese-language sentences of varying lengths used as typing prompts.
 
 ## Project Layout
@@ -46,10 +46,10 @@ A minimalist terminal-based type trainer written in C, powered by `ncurses`.
 ## Requirements
 
 - CMake ≥ 3.15
-- A C11-capable compiler (GCC or Clang)
-- `ncursesw` (wide-character ncurses) development headers
-- Optional, for `tools/run.sh debug`: `gdb`, and `tmux` + `gdbserver` if you want the split-pane debugging experience
-- Optional: [Nix](https://nixos.org/) for a reproducible, zero-setup dev shell
+- A C11-capable compiler (GCC or Clang).
+- `ncursesw` (wide-character ncurses) development headers.
+- Optional, for `tools/run.sh debug`: `gdb`, and `tmux` + `gdbserver` if you want the split-pane debugging experience.
+- Optional: [Nix](https://nixos.org/) for a reproducible, zero-setup dev shell.
 
 ## Building
 
@@ -118,9 +118,10 @@ cmake --build --preset build-debug   # or: build-release
 
 The repo is set up for consistent formatting and static analysis out of the box:
 
-- `.clang-format` — Microsoft-based style
-- `.editorconfig` — 4-space indentation, LF line endings, 80-column limit for C/C++ sources
-- `.clangd` — points at `build/debug`'s compilation database for editor tooling (`compile_commands.json`)
+- `.clang-format` — Microsoft-based style.
+- `.editorconfig` — 4-space indentation, LF line endings, 80-column limit for C/C++ sources.
+- `.clangd` — points at `build/debug`'s compilation database for editor tooling (`compile_commands.json`).
+- `CMakeLists.txt` - usage of warning for better practices. `-Wall`, `-Wextra` and `-Wpendantic` are the major ones.
 
 ## Known Issues / TODO
 
