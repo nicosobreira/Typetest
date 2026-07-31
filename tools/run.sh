@@ -14,7 +14,18 @@ function run_workflow()
 	local workflow="$1"
 
 	cmake --workflow --preset "$workflow"
+
 }
+
+function run_profile()
+{
+	run_workflow "profile"
+
+    perf record -g "$(binary_path "profile")"
+
+	hotspot perf.data &>/dev/null &
+}
+
 
 function run_debug()
 {
@@ -80,6 +91,10 @@ case "$MODE" in
 		echo -e "\tBuild\n"
 		run_workflow "dev"
 		;;
+    profile | p)
+        echo -e "\tProfile\n"
+        run_profile
+        ;;
 	run | r)
 		run
 		;;

@@ -22,7 +22,7 @@ void Menu_OnEnter(void *data)
     int width = getmaxx(win);
 
     char *title = "Typetest";
-    int titleX = (width - strlen(title)) / 2;
+    int titleX = (width - (int)strlen(title)) / 2;
     mvwprintw(win, 1, titleX, "%s", title);
 
     mvwhline(win, 3, 1, ACS_HLINE, width - 2);
@@ -31,8 +31,8 @@ void Menu_OnEnter(void *data)
     const char *playText = "[P] Play";
     const char *quitText = "[Q] Exit";
 
-    int playX = (width - strlen(playText)) / 2;
-    int quitX = (width - strlen(quitText)) / 2;
+    int playX = (width - (int)strlen(playText)) / 2;
+    int quitX = (width - (int)strlen(quitText)) / 2;
 
     mvwprintw(win, 5, playX, "%s", playText);
     mvwprintw(win, 6, quitX, "%s", quitText);
@@ -63,9 +63,13 @@ void Menu_Input(void *data)
     case 'p':
         SceneManager_Switch(SCENE_TYPING);
         break;
+
     case KEY_CODE_BACKSPACE:
     case 'q':
         SceneManager_Close();
+        break;
+
+    default:
         break;
     }
 }

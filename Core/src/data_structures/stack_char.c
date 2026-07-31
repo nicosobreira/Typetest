@@ -34,14 +34,14 @@ void StackChar_Push(StackChar *pStack, wchar_t new)
     {
         pStack->capacity *= 2;
 
-        pStack->array = realloc(pStack->array, pStack->capacity);
+        pStack->array = realloc(pStack->array, sizeof(wchar_t) * pStack->capacity);
         if (!pStack->array)
             ERROR(10, "%s", "Reallocation failed");
     }
 
-    pStack->length++;
-
     pStack->array[pStack->length] = new;
+
+    pStack->length++;
 }
 
 void StackChar_Pop(StackChar *pStack)
