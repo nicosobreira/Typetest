@@ -1,12 +1,29 @@
-#ifndef _MANAGER_H
-#define _MANAGER_H
+#ifndef SCENES_H
+#define SCENES_H
 
 #include <stdbool.h>
 #include <stddef.h>
 
-#include "scene.h"
-
 #define SCENES_MAX 16
+
+typedef struct Scene
+{
+    void (*Free)(void *pData);
+
+    void (*OnEnter)(void *pData);
+    void (*OnExit)(void *pData);
+
+    void (*Input)(void *pData);
+    void (*Update)(void *pData);
+    void (*Draw)(void *pData);
+
+    /// Heap allocated data pointer.
+    /// This `Scene` manages the lifetime.
+    void *pData;
+
+    /// Name of the scene.
+    const char *name;
+} Scene;
 
 /** Array of Scenes
  */
@@ -56,4 +73,4 @@ void Scene_Update(void);
 
 void Scene_Draw(void);
 
-#endif // _MANAGER_H
+#endif // SCENES_H

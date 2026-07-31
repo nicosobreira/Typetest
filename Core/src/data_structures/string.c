@@ -1,8 +1,8 @@
-#include "string.h"
+#include "Core/data_structures/string.h"
 
 #include <wchar.h>
 
-#include "Core/utils/error.h"
+#include "Core/error.h"
 
 void String_New(String *pString, wchar_t *letters)
 {

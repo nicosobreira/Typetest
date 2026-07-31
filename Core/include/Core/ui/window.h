@@ -7,7 +7,7 @@
 
 #include <ncursesw/ncurses.h>
 
-#include "Core/utils/string.h"
+#include "Core/data_structures/string.h"
 
 typedef enum WindowLayout
 {

@@ -1,11 +1,11 @@
-#include "Core/scenes/manager.h"
+#include "Core/scenes.h"
 
 #include <locale.h>
 #include <ncurses.h>
 #include <stdlib.h>
 #include <time.h>
 
-#include "Core/utils/error.h"
+#include "Core/error.h"
 
 #include "scenes/menu.h"
 #include "scenes/score.h"

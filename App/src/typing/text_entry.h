@@ -1,7 +1,7 @@
 #ifndef TEXT_H
 #define TEXT_H
 
-#include "Core/utils/string.h"
+#include "Core/data_structures/string.h"
 
 typedef enum TextDifficulty
 {

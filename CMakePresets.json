@@ -1,18 +1,25 @@
 {
-	"version": 3,
+	"version": 6,
 	"configurePresets": [
+        {
+          "name": "base",
+          "hidden": true,
+          "binaryDir": "${sourceDir}/build/${presetName}",
+          "cacheVariables": {
+            "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+          }
+        },
 		{
 			"name": "debug",
-			"binaryDir": "build",
+            "inherits": "base",
 			"cacheVariables": {
-				"CMAKE_BUILD_TYPE": "Debug",
-				"CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+				"CMAKE_BUILD_TYPE": "Debug"
 			}
 		},
 
 		{
 			"name": "release",
-			"binaryDir": "build",
+            "inherits": "base",
 			"cacheVariables": {
 				"CMAKE_BUILD_TYPE": "Release"
 			}
@@ -20,11 +27,39 @@
 
 		{
 			"name": "profile",
-			"binaryDir": "build/profile",
+            "inherits": "base",
 			"cacheVariables": {
-				"CMAKE_BUILD_TYPE": "RelWithDebInfo",
-				"CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+				"CMAKE_BUILD_TYPE": "RelWithDebInfo"
 			}
 		}
-	]
+	],
+
+  "buildPresets": [
+    {
+      "name": "build-debug",
+      "configurePreset": "debug"
+    },
+    {
+      "name": "build-release",
+      "configurePreset": "release"
+    }
+  ],
+  "workflowPresets": [
+    {
+      "name": "dev",
+      "displayName": "Configure + Build (Debug)",
+      "steps": [
+        { "type": "configure", "name": "debug" },
+        { "type": "build",     "name": "build-debug" }
+      ]
+    },
+    {
+      "name": "ship",
+      "displayName": "Configure + Build (Release)",
+      "steps": [
+        { "type": "configure", "name": "release" },
+        { "type": "build",     "name": "build-release" }
+      ]
+    }
+  ]
 }

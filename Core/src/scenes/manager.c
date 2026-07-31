@@ -1,48 +1,16 @@
-#include "manager.h"
+#include "Core/scenes.h"
 
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/time.h>
-#include <time.h>
 
-#include "Core/constants/frames.h"
-#include "Core/utils/error.h"
+#include "Core/constants.h"
+#include "Core/error.h"
+
+#include "time.h"
 
 static SceneManager g_Manager = {0};
-
-#ifdef _WIN32
-
-#include <windows.h>
-
-static double getTimeMs(void)
-{
-    static LARGE_INTEGER frequency;
-    static int initialized = 0;
-
-    if (!initialized)
-    {
-        QueryPerformanceFrequency(&frequency);
-        initialized = 1;
-    }
-
-    LARGE_INTEGER counter;
-    QueryPerformanceCounter(&counter);
-
-    return (double)(counter.QuadPart * 1000.0 / frequency.QuadPart);
-}
-
-#else
-
-static double getTimeMs(void)
-{
-    struct timeval tv;
-    gettimeofday(&tv, NULL);
-
-    return (double)((double)tv.tv_sec * 1000.0 + (double)tv.tv_usec / 1000.0);
-}
-
-#endif // _WIN32
 
 void SceneManager_Init(void)
 {

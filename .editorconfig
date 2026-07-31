@@ -13,14 +13,12 @@ insert_final_newline = true
 max_line_length = 80
 
 [*.{cpp,hpp,cc,cxx,hxx}]
-max_line_length = 120
+max_line_length = 80
 
-[Makefile]
-indent_style = tab
-indent_size = 4
+[*.json]
+indent_size = 2
 
 [CMakeLists.txt]
-indent_style = space
 indent_size = 2
 
 [*.md]

@@ -2,77 +2,83 @@
 
 set -eou pipefail
 
-BINARY="./build/App/typetest"
-
-function run_build()
+function binary_path()
 {
 	local preset="$1"
-	local build_dir="${2-build}"
 
-	cmake --preset "$preset"
-	cmake --build "$build_dir"
+	echo "build/${preset}/App/typetest"
 }
 
-function run_profile()
+function run_workflow()
 {
-	run_build "profile" "build/profile"
+	local workflow="$1"
 
-	perf record -g "$BINARY"
-
-	hotspot perf.data &>/dev/null &
+	cmake --workflow --preset "$workflow"
 }
 
-function run_debug() {
-  local preset="debug"
+function run_debug()
+{
+	run_workflow "dev"
 
-  # Pick a free TCP port
-  local port
-  port=$(shuf -i 2000-65000 -n 1)
+	local binary
+	binary=$(binary_path "debug")
 
-  run_build "debug" "build"
+	if [[ -n "${TMUX-}" ]]; then
+		local port
+		port=$(shuf -i 2000-65000 -n 1)
 
-  if [[ -n "${TMUX-}" ]]; then
-    echo "Starting gdbserver on port ${port}..."
+		echo "Starting gdbserver on port ${port}..."
 
-    tmux split-window -h -p 50 \
-      "exec gdbserver :${port} '${BINARY}'"
+		tmux split-window -h -p 50 \
+			"exec gdbserver :${port} '${binary}'"
 
-    # Small delay so gdbserver is listening
-    sleep 0.2
+		# Small delay so gdbserver is listening
+		sleep 0.2
 
-    tmux select-pane -t left
+		tmux select-pane -t left
 
-    gdb --tui -q \
-      -ex "file ${BINARY}" \
-      -ex "target remote :${port}"
+		gdb --tui -q \
+			-ex "file ${binary}" \
+			-ex "target remote :${port}"
+	else
+		gdb --tui -q "${binary}"
+	fi
+}
 
-  else
-    gdb --tui -q "${BINARY}"
-  fi
+function link_compile_commands()
+{
+    local preset="$1"
+
+    local build="./build"
+
+    local link="${build}/compile_commands.json"
+    if [[ ! -f "${link}" ]]; then
+        echo "Linking compile_commands ..."
+
+        local src="./${preset}/compile_commands.json"
+        (cd "${build}" && ln -s "${src}" .)
+    fi
 }
 
 function run()
 {
+	run_workflow "dev"
 
-	run_build "debug" "build"
+    link_compile_commands "debug"
 
-	exec "$BINARY"
+	exec "$(binary_path "debug")"
 }
 
 MODE="${1-}"
 
 case "$MODE" in
-	profile | p)
-		echo -e "\tProfile\n"
-		run_profile
-		;;
 	debug | d)
 		echo -e "\tDebug\n"
 		run_debug
 		;;
 	build | b)
 		echo -e "\tBuild\n"
-		run_build "debug" "build"
+		run_workflow "dev"
 		;;
 	run | r)
 		run

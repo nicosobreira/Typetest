@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "Core/utils/error.h"
-#include "Core/utils/math.h"
+#include "Core/error.h"
+#include "Core/math.h"
 
 int Window_GetCols(WINDOW *win)
 {

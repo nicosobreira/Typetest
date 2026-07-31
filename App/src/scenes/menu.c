@@ -4,8 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "Core/constants/key_codes.h"
-#include "Core/scenes/manager.h"
+#include "Core/constants.h"
+#include "Core/scenes.h"
 #include "Core/ui/window.h"
 
 #include "scenes/typing.h"

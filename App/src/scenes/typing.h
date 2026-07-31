@@ -7,11 +7,11 @@
 
 #include <ncursesw/ncurses.h>
 
-#include "Core/constants/frames.h"
-#include "Core/scenes/scene.h"
-#include "Core/utils/clock.h"
-#include "Core/utils/point.h"
-#include "Core/utils/stack_char.h"
+#include "Core/clock.h"
+#include "Core/constants.h"
+#include "Core/data_structures/point.h"
+#include "Core/data_structures/stack_char.h"
+#include "Core/scenes.h"
 
 #include "typing/text_entry.h"
 

@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "Core/constants/key_codes.h"
-#include "Core/scenes/manager.h"
+#include "Core/constants.h"
+#include "Core/scenes.h"
 #include "Core/ui/color.h"
 #include "Core/ui/cursor.h"
 #include "Core/ui/window.h"
@@ -14,14 +14,14 @@
 
 static void handleBackspace(TypingData *self)
 {
-    if (!String_IsIndexValid(&self->entry.text, self->pointerText - 1))
+    if (!String_IsIndexValid(&self->entry.text, (size_t)self->pointerText - 1))
         return;
 
     Cursor_MoveLeft(&self->cursor, self->windowText);
 
     self->pointerText--;
 
-    wchar_t textChar = String_GetAt(&self->entry.text, self->pointerText);
+    wchar_t textChar = String_GetAt(&self->entry.text, (size_t)self->pointerText);
 
     if (textChar == StackChar_Top(&self->input))
         self->score.correctLetters--;
@@ -34,14 +34,15 @@ static void handleBackspace(TypingData *self)
 static void handleCharacterInput(TypingData *self, wint_t key)
 {
     String *pText = &self->entry.text;
+    size_t pointerText = (size_t)self->pointerText;
 
-    if (!String_IsIndexValid(pText, self->pointerText))
+    if (!String_IsIndexValid(pText, pointerText))
         return;
 
     wchar_t character = (wchar_t)key;
     StackChar_Push(&self->input, character);
 
-    wchar_t textChar = String_GetAt(pText, self->pointerText);
+    wchar_t textChar = String_GetAt(pText, pointerText);
 
     if (character == textChar)
     {
@@ -66,7 +67,7 @@ static void handleCharacterInput(TypingData *self, wint_t key)
     COLOR_CLEAR(self->windowText);
 
     // NOTE: Game win
-    int length = String_Length(pText);
+    int length = (int)String_Length(pText);
     if (self->score.correctLetters >= length)
     {
         SceneManager_Switch(SCENE_SCORE);
@@ -118,14 +119,13 @@ static int getPercentageColor(int percentage)
     {
         return COLOR_RED;
     }
-    else if (percentage < medium)
+
+    if (percentage < medium)
     {
         return COLOR_YELLOW;
     }
-    else
-    {
-        return COLOR_GREEN;
-    }
+
+    return COLOR_GREEN;
 }
 
 static void drawPercentage(WINDOW *win, int percentage)
@@ -139,6 +139,7 @@ static void drawPercentage(WINDOW *win, int percentage)
 
     if (percentage < 0)
         percentage = 0;
+
     if (percentage > 100)
         percentage = 100;
 
@@ -176,11 +177,12 @@ static void statusDraw(TypingData *self)
 
     // Title
     const char *title = "STATUS";
-    mvwprintw(win, 1, (maxX - strlen(title)) / 2, "%s", title);
+    const int x = maxX - ((int)strlen(title) / 2);
+    mvwprintw(win, 1, x, "%s", title);
 
     mvwhline(win, 2, 1, ACS_HLINE, maxX - 2);
 
-    int length = String_Length(&self->entry.text);
+    int length = (int)String_Length(&self->entry.text);
     int percentage = 100 * self->score.correctLetters / length;
 
     drawPercentage(win, percentage);

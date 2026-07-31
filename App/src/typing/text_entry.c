@@ -2,7 +2,7 @@
 
 #include <stdlib.h> // rand, srand
 
-#include "Core/utils/string.h"
+#include "Core/data_structures/string.h"
 #include "typing/samples.h"
 
 static TextDifficulty getStringDifficulty(String *pString)

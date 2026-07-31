@@ -7,7 +7,7 @@
 
 #include <ncursesw/ncurses.h>
 
-#include "Core/utils/point.h"
+#include "Core/data_structures/point.h"
 
 void Cursor_Reset(Point *pCursor);
 

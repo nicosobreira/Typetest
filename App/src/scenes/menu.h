@@ -7,7 +7,7 @@
 
 #include <ncursesw/ncurses.h>
 
-#include "Core/scenes/scene.h"
+#include "Core/scenes.h"
 
 #define SCENE_MENU ("menu")
 

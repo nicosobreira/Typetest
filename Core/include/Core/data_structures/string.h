@@ -5,7 +5,7 @@
 #include <stddef.h>
 #include <wchar.h>
 
-#include "Core/utils/stack_char.h"
+#include "Core/data_structures/stack_char.h"
 
 /// A StackChar wrapper that doesn't own it's memory
 typedef struct String

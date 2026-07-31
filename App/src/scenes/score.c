@@ -2,7 +2,7 @@
 
 #include <stdlib.h>
 
-#include "Core/scenes/manager.h"
+#include "Core/scenes.h"
 #include "Core/ui/window.h"
 
 #include "scenes/menu.h"

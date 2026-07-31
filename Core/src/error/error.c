@@ -1,9 +1,9 @@
-#include "error.h"
+#include "Core/error.h"
 
 #include <ncurses.h>
-#include <signal.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 
 void handle_error(int errorCode, const char *file, int line, const char *function, const char *message, ...)
@@ -24,5 +24,5 @@ void handle_error(int errorCode, const char *file, int line, const char *functio
 
     fprintf(stderr, "\n\n");
 
-    raise(SIGABRT);
+    abort();
 }
