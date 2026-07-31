@@ -11,8 +11,6 @@
 #include "scenes/score.h"
 #include "scenes/typing.h"
 
-// Teste: O som foi adicionado
-
 static void ncursesInit(void)
 {
     setlocale(LC_ALL, "");

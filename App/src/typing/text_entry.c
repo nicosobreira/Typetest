@@ -12,9 +12,9 @@ static TextDifficulty getStringDifficulty(String *pString)
         return TEXT_DIFFICULTY_EASY;
 
     if (length < 45)
-        return TEXT_DIFFICULTY_EASY;
+        return TEXT_DIFFICULTY_MEDIUM;
 
-    return TEXT_DIFFICULTY_EASY;
+    return TEXT_DIFFICULTY_HARD;
 }
 
 TextEntry TextEntry_RandomText(void)
