@@ -5,6 +5,7 @@ docs/
 .cache
 compile_commands*
 .direnv
+perf*
 
 .cache
 # Prerequisites
